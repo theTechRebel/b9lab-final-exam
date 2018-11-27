@@ -1,3 +1,5 @@
+/* global web3 assert artifacts contract describe before beforeEach it */
+
 const expectedExceptionPromise = require("../utils/expectedException.js");
 web3.eth.getTransactionReceiptMined = require("../utils/getTransactionReceiptMined.js");
 const Promise = require("bluebird");
@@ -14,7 +16,7 @@ const TollBoothOperator = artifacts.require("./TollBoothOperator.sol");
 
 const maxGas = 15000000;
 
-contract('TollBoothOperator', function(accounts) {
+contract("TollBoothOperator", function(accounts) {
 
     let owner0, owner1,
         booth0, booth1, booth2,
@@ -55,7 +57,7 @@ contract('TollBoothOperator', function(accounts) {
 
         it("should be possible to deploy a TollBoothOperator with parameters - 1", function() {
             return TollBoothOperator.new(false, deposit0, owner0, { from: owner1 })
-                .then(instance => operator = instance)
+                .then(instance => { operator = instance; })
                 .then(() => operator.isPaused())
                 .then(paused => assert.isFalse(paused))
                 .then(() => operator.getDeposit())
@@ -68,11 +70,11 @@ contract('TollBoothOperator', function(accounts) {
 
         beforeEach("should deploy regulator and operator", function() {
             return Regulator.new({ from: owner0 })
-                .then(instance => regulator = instance)
+                .then(instance => { regulator = instance; })
                 .then(() => regulator.setVehicleType(vehicle0, vehicleType0, { from: owner0 }))
                 .then(tx => regulator.setVehicleType(vehicle1, vehicleType1, { from: owner0 }))
                 .then(tx => regulator.createNewOperator(owner1, deposit0, { from: owner0 }))
-                .then(tx => operator = TollBoothOperator.at(tx.logs[1].args.newOperator))
+                .then(tx => { operator = TollBoothOperator.at(tx.logs[1].args.newOperator); })
                 .then(() => operator.addTollBooth(booth0, { from: owner1 }))
                 .then(tx => operator.addTollBooth(booth1, { from: owner1 }))
                 .then(tx => operator.addTollBooth(booth2, { from: owner1 }))
@@ -81,9 +83,9 @@ contract('TollBoothOperator', function(accounts) {
                 .then(tx => operator.setRoutePrice(booth0, booth1, price01, { from: owner1 }))
                 .then(tx => operator.setPaused(false, { from: owner1 }))
                 .then(tx => operator.hashSecret(secret0))
-                .then(hash => hashed0 = hash)
+                .then(hash => { hashed0 = hash; })
                 .then(tx => operator.hashSecret(secret1))
-                .then(hash => hashed1 = hash);
+                .then(hash => { hashed1 = hash; });
         });
 
         describe("enterRoad", function() {
@@ -129,14 +131,13 @@ contract('TollBoothOperator', function(accounts) {
         describe("reportExitRoad with excessive deposited", function() {
 
             const extraDeposit = randomIntIn(1, 1000);
-            const extraPrice = extraDeposit + randomIntIn(1, 1000);
             let vehicleInitBal;
 
             beforeEach("should enter road with excessive deposit", function() {
                 return operator.enterRoad(
                     booth0, hashed0, { from: vehicle0, value: (deposit0 + extraDeposit) * multiplier0 })
                     .then(tx => web3.eth.getBalancePromise(vehicle0))
-                    .then(balance => vehicleInitBal = balance);
+                    .then(balance => { vehicleInitBal = balance; });
             });
 
             it("should be possible to report exit road on route with known price below deposited", function() {
@@ -233,9 +234,9 @@ contract('TollBoothOperator', function(accounts) {
                     .then(tx => operator.enterRoad(
                         booth0, hashed1, { from: vehicle1, value: extraDeposit1 * multiplier1 }))
                     .then(tx => web3.eth.getBalancePromise(vehicle0))
-                    .then(balance => vehicle0InitBal = balance)
+                    .then(balance => { vehicle0InitBal = balance; })
                     .then(() => web3.eth.getBalancePromise(vehicle1))
-                    .then(balance => vehicle1InitBal = balance)
+                    .then(balance => { vehicle1InitBal = balance; })
                     .then(() => operator.reportExitRoad(secret1, { from: booth2 }))
                     .then(tx => operator.reportExitRoad(secret0, { from: booth2 }));
             });
@@ -419,11 +420,11 @@ contract('TollBoothOperator', function(accounts) {
 
         beforeEach("should deploy regulator and operator, and enter 2 vehicles", function() {
             return Regulator.new({ from: owner0 })
-                .then(instance => regulator = instance)
+                .then(instance => { regulator = instance; })
                 .then(() => regulator.setVehicleType(vehicle0, vehicleType0, { from: owner0 }))
                 .then(() => regulator.setVehicleType(vehicle1, vehicleType1, { from: owner0 }))
                 .then(tx => regulator.createNewOperator(owner1, deposit0, { from: owner0 }))
-                .then(tx => operator = TollBoothOperator.at(tx.logs[1].args.newOperator))
+                .then(tx => { operator = TollBoothOperator.at(tx.logs[1].args.newOperator); })
                 .then(() => operator.addTollBooth(booth0, { from: owner1 }))
                 .then(tx => operator.addTollBooth(booth1, { from: owner1 }))
                 .then(tx => operator.setMultiplier(vehicleType0, multiplier0, { from: owner1 }))
@@ -431,30 +432,30 @@ contract('TollBoothOperator', function(accounts) {
                 .then(tx => operator.setRoutePrice(booth0, booth1, price01, { from: owner1 }))
                 .then(tx => operator.setPaused(false, { from: owner1 }))
                 .then(tx => operator.hashSecret(secret0))
-                .then(hash => hashed0 = hash)
+                .then(hash => { hashed0 = hash; })
                 .then(tx => operator.hashSecret(secret1))
-                .then(hash => hashed1 = hash)
+                .then(hash => { hashed1 = hash; })
                 .then(() => operator.enterRoad(booth0, hashed0, { from: vehicle0, value: deposit0 * multiplier0 }))
                 .then(() => operator.enterRoad(booth0, hashed1, { from: vehicle1, value: deposit0 * multiplier1 }))
                 .then(tx => web3.eth.getBalancePromise(owner1))
-                .then(balance => owner1InitBal = balance);
+                .then(balance => { owner1InitBal = balance; });
         });
 
         it("should be possible to withdraw if second vehicle has exited", function() {
             return operator.reportExitRoad(secret1, { from: booth1 })
                 .then(tx => operator.withdrawCollectedFees({ from: owner1, gasPrice: gasPrice }))
                 .then(tx => {
-                        assert.strictEqual(tx.receipt.logs.length, 1);
-                        assert.strictEqual(tx.logs.length, 1);
-                        const logFeesCollected = tx.logs[0];
-                        assert.strictEqual(logFeesCollected.event, "LogFeesCollected");
-                        assert.strictEqual(logFeesCollected.args.owner, owner1);
-                        assert.strictEqual(logFeesCollected.args.amount.toNumber(), price01 * multiplier1);
-                        owner1InitBal = owner1InitBal.minus(tx.receipt.gasUsed * gasPrice);
-                        return Promise.allNamed({
-                            contract: () => web3.eth.getBalancePromise(operator.address),
-                            owner1: () => web3.eth.getBalancePromise(owner1)
-                        });
+                    assert.strictEqual(tx.receipt.logs.length, 1);
+                    assert.strictEqual(tx.logs.length, 1);
+                    const logFeesCollected = tx.logs[0];
+                    assert.strictEqual(logFeesCollected.event, "LogFeesCollected");
+                    assert.strictEqual(logFeesCollected.args.owner, owner1);
+                    assert.strictEqual(logFeesCollected.args.amount.toNumber(), price01 * multiplier1);
+                    owner1InitBal = owner1InitBal.minus(tx.receipt.gasUsed * gasPrice);
+                    return Promise.allNamed({
+                        contract: () => web3.eth.getBalancePromise(operator.address),
+                        owner1: () => web3.eth.getBalancePromise(owner1)
+                    });
                 })
                 .then(balances => {
                     assert.strictEqual(balances.contract.toNumber(), deposit0 * multiplier0);

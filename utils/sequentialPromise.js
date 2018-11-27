@@ -11,7 +11,7 @@ module.exports = function sequentialPromise(promiseArray) {
             return {
                 chain: reduced.chain
                     .then(() => promise())
-                    .then(result => reduced.results[ index ] = result),
+                    .then(result => { reduced.results[ index ] = result; }),
                 results: reduced.results
             };
         },

@@ -1,3 +1,5 @@
+/* global web3 assert artifacts contract describe before beforeEach it */
+
 const expectedExceptionPromise = require("../utils/expectedException.js");
 web3.eth.getTransactionReceiptMined = require("../utils/getTransactionReceiptMined.js");
 const Promise = require("bluebird");
@@ -14,7 +16,7 @@ if (typeof web3.eth.getAccountsPromise === "undefined") {
 const allArtifacts = {
     MultiplierHolder: artifacts.require("./MultiplierHolder.sol"),
     TollBoothOperator: artifacts.require("./TollBoothOperator.sol")
-}
+};
 
 const maxGas = 15000000;
 
@@ -25,9 +27,8 @@ const constructors = {
         paused, 1, owner, { from: owner, value: value || 0 })
 };
 
-contract('MultiplierHolder', function(accounts) {
+contract("MultiplierHolder", function(accounts) {
 
-    let isTestRPC;
     let owner0, owner1, holder;
     const type0 = Math.floor(Math.random() * 1000) + 1;
     const type1 = type0 + Math.floor(Math.random() * 1000) + 1;
@@ -38,9 +39,7 @@ contract('MultiplierHolder', function(accounts) {
         assert.isAtLeast(accounts.length, 2);
         owner0 = accounts[0];
         owner1 = accounts[1];
-        return web3.version.getNodePromise()
-            .then(node => isTestRPC = node.indexOf("TestRPC") > -1)
-            .then(() => web3.eth.getBalancePromise(owner0))
+        return web3.eth.getBalancePromise(owner0)
             .then(balance => assert.isAtLeast(web3.fromWei(balance).toNumber(), 10));
     });
 
@@ -57,16 +56,16 @@ contract('MultiplierHolder', function(accounts) {
 
             beforeEach("should deploy a new un-paused " + name, function() {
                 return constructors[name](owner0, false)
-                    .then(instance => holder = instance);
+                    .then(instance => { holder = instance; });
             });
 
             describe("getMultiplier", function() {
 
                 it("should have correct initial value", function() {
                     return Promise.allNamed({
-                            type0: () => holder.getMultiplier(type0),
-                            type1: () => holder.getMultiplier(type1)
-                        })
+                        type0: () => holder.getMultiplier(type0),
+                        type1: () => holder.getMultiplier(type1)
+                    })
                         .then(multipliers => {
                             assert.strictEqual(multipliers.type0.toNumber(), 0);
                             assert.strictEqual(multipliers.type1.toNumber(), 0);
@@ -149,7 +148,7 @@ contract('MultiplierHolder', function(accounts) {
 
             });
 
-            if (name == "TollBoothOperator") {
+            if (name === "TollBoothOperator") {
 
                 describe("setMultiplier in TollBoothOperator is not pausable", function() {
 
@@ -198,7 +197,7 @@ contract('MultiplierHolder', function(accounts) {
                     { name: "type0 - zero", type: type0, multiplier: 0 },
                     { name: "type0 - multiplier1", type: type0, multiplier: multiplier1 },
                     { name: "type1 - multiplier0", type: type1, multiplier: multiplier0 },
-                    { name: "type1 - multiplier1", type: type1, multiplier: multiplier1 },
+                    { name: "type1 - multiplier1", type: type1, multiplier: multiplier1 }
                 ];
 
                 beforeEach("should set first multiplier", function() {
@@ -225,8 +224,8 @@ contract('MultiplierHolder', function(accounts) {
                                 });
                             })
                             .then(multipliers => {
-                                assert.strictEqual(multipliers.type0.toNumber(), arg.type == type0 ? arg.multiplier : multiplier0)
-                                assert.strictEqual(multipliers.type1.toNumber(), arg.type == type1 ? arg.multiplier : 0);
+                                assert.strictEqual(multipliers.type0.toNumber(), arg.type === type0 ? arg.multiplier : multiplier0);
+                                assert.strictEqual(multipliers.type1.toNumber(), arg.type === type1 ? arg.multiplier : 0);
                             });
                     });
                 });
@@ -280,7 +279,7 @@ contract('MultiplierHolder', function(accounts) {
         });
 
     });
- 
+
     it("should have correct number of functions", function() {
         return constructors.MultiplierHolder(owner0, false)
             .then(holder => assert.strictEqual(Object.keys(holder).length, 14));

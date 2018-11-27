@@ -11,7 +11,7 @@ module.exports = function sequentialPromiseNamed(promiseObject) {
             return {
                 chain: reduced.chain
                     .then(() => promiseObject[ key ]())
-                    .then(result => reduced.results[ key ] = result),
+                    .then(result => { reduced.results[ key ] = result; }),
                 results: reduced.results
             };
         },

@@ -1,4 +1,5 @@
-const expectedExceptionPromise = require("../utils/expectedException.js");
+/* global web3 assert artifacts contract describe before beforeEach it */
+
 web3.eth.getTransactionReceiptMined = require("../utils/getTransactionReceiptMined.js");
 const Promise = require("bluebird");
 Promise.allNamed = require("../utils/sequentialPromiseNamed.js");
@@ -11,13 +12,11 @@ if (typeof web3.eth.getAccountsPromise === "undefined") {
 const Regulator = artifacts.require("./Regulator.sol");
 const TollBoothOperator = artifacts.require("./TollBoothOperator.sol");
 
-contract('Regulator, Toll Booth Operator', function(accounts) {
+contract("Regulator, Toll Booth Operator", function(accounts) {
 
-    let owner0, owner1, owner2, operator0, operator1, regulator;
+    let owner0, owner1, owner2, operator0, regulator;
     const addressZero = "0x0000000000000000000000000000000000000000";
     const deposit0 = Math.floor(Math.random() * 1000) + 1;
-    const deposit1 = deposit0 + Math.floor(Math.random() * 1000) + 1;
-    const deposit2 = deposit1 + Math.floor(Math.random() * 1000) + 1;
 
     before("should prepare", function() {
         assert.isAtLeast(accounts.length, 3);
@@ -30,18 +29,18 @@ contract('Regulator, Toll Booth Operator', function(accounts) {
 
     beforeEach("should deploy a new Regulator", function() {
         return Regulator.new({ from: owner0 })
-            .then(instance => regulator = instance);
+            .then(instance => { regulator = instance; });
     });
 
     describe("isOperator", function() {
 
         it("should have correct initial value", function() {
             return Promise.allNamed({
-                    regulator: () => regulator.isOperator(regulator.address),
-                    owner0: () => regulator.isOperator(owner0),
-                    owner1: () => regulator.isOperator(owner1),
-                    zero: () => regulator.isOperator(addressZero)
-                })
+                regulator: () => regulator.isOperator(regulator.address),
+                owner0: () => regulator.isOperator(owner0),
+                owner1: () => regulator.isOperator(owner1),
+                zero: () => regulator.isOperator(addressZero)
+            })
                 .then(isIndeeds => {
                     assert.isFalse(isIndeeds.regulator);
                     assert.isFalse(isIndeeds.owner0);
@@ -105,7 +104,7 @@ contract('Regulator, Toll Booth Operator', function(accounts) {
 
         beforeEach("should create an operator", function() {
             return regulator.createNewOperator(owner1, deposit0, { from: owner0 })
-                .then(tx => operator0 = tx.logs[1].args.newOperator);
+                .then(tx => { operator0 = tx.logs[1].args.newOperator; });
         });
 
         it("should be possible to remove an operator", function() {

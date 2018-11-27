@@ -1,3 +1,4 @@
+/* global web3 assert */
 "use strict";
 
 /**
@@ -6,15 +7,15 @@
  * @returns {!Promise} which throws unless it hit a valid error.
  */
 module.exports = function expectedExceptionPromise(action, gasToUse) {
-    return new Promise(function (resolve, reject) {
-            try {
-                resolve(action());
-            } catch(e) {
-                reject(e);
-            }
-        })
-        .then(function (txObj) {
-            return typeof txObj === "string" 
+    return new Promise(function(resolve, reject) {
+        try {
+            resolve(action());
+        } catch (e) {
+            reject(e);
+        }
+    })
+        .then(function(txObj) {
+            return typeof txObj === "string"
                 ? web3.eth.getTransactionReceiptMined(txObj) // regular tx hash
                 : typeof txObj.receipt !== "undefined"
                     ? txObj.receipt // truffle-contract function call
@@ -23,7 +24,7 @@ module.exports = function expectedExceptionPromise(action, gasToUse) {
                         : txObj; // Unknown last case
         })
         .then(
-            function (receipt) {
+            function(receipt) {
                 // We are in Geth
                 if (typeof receipt.status !== "undefined") {
                     // Byzantium
@@ -33,7 +34,7 @@ module.exports = function expectedExceptionPromise(action, gasToUse) {
                     assert.equal(receipt.gasUsed, gasToUse, "should have used all the gas");
                 }
             },
-            function (e) {
+            function(e) {
                 if ((e + "").indexOf("invalid JUMP") > -1 ||
                         (e + "").indexOf("out of gas") > -1 ||
                         (e + "").indexOf("invalid opcode") > -1 ||
@@ -46,4 +47,4 @@ module.exports = function expectedExceptionPromise(action, gasToUse) {
                 }
             }
         );
-    };
+};

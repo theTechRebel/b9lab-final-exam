@@ -1,3 +1,5 @@
+/* global web3 assert artifacts contract describe before beforeEach it */
+
 const expectedExceptionPromise = require("../utils/expectedException.js");
 web3.eth.getTransactionReceiptMined = require("../utils/getTransactionReceiptMined.js");
 const Promise = require("bluebird");
@@ -15,7 +17,7 @@ const allArtifacts = {
     RoutePriceHolder: artifacts.require("./RoutePriceHolderMock.sol"),
     TollBoothHolder: artifacts.require("./TollBoothHolder.sol"),
     TollBoothOperator: artifacts.require("./TollBoothOperator.sol")
-}
+};
 
 const maxGas = 15000000;
 
@@ -38,7 +40,7 @@ const constructors = {
         false, 105, owner, { from: owner, value: value || 0 })
 };
 
-contract('Owned inheritance tree', function(accounts) {
+contract("Owned inheritance tree", function(accounts) {
 
     let owner0, owner1, owned;
     const addressZero = "0x0000000000000000000000000000000000000000";
@@ -52,7 +54,7 @@ contract('Owned inheritance tree', function(accounts) {
     });
 
     Object.keys(constructors).forEach(name => {
-        
+
         it("should fail to deploy a " + name + " if pass value", function() {
             return constructors[name](owner0, 1)
                 .then(
@@ -64,7 +66,7 @@ contract('Owned inheritance tree', function(accounts) {
 
             beforeEach("should deploy a new " + name, function() {
                 return constructors[name](owner0)
-                    .then(instance => owned = instance);
+                    .then(instance => { owned = instance; });
             });
 
             describe("getOwner", function() {

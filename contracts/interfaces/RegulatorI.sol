@@ -12,6 +12,8 @@ contract RegulatorI {
      *   1: motorbike
      *   2: car
      *   3: lorry
+     * Do not construe this list of example vehicle types as a constraint on the acceptable values.
+     * All values of vehicle type are acceptable, there is no constraint.
      */
 
     /**

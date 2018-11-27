@@ -8,6 +8,9 @@ import { Pausable } from "../contracts/Pausable.sol";
 import { Regulator } from "../contracts/Regulator.sol";
 import { DepositHolder } from "../contracts/DepositHolder.sol";
 
+// If you have an out-of-gas error when testing this file, try launching
+// ganache-cli -l 15000000 --allowUnlimitedContractSize
+
 contract TestOwnedA {
 
     uint instanceCount = 4;

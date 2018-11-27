@@ -140,7 +140,7 @@ Additionally:
 
 * the regulator collects no fees.
 * a type of `0` denotes an unregistered vehicle.
-* for mnemonics only, you can assign type `1` for motorbikes, `2` for cars and `3` for lorries.
+* for mnemonics only, you can assign type `1` for motorbikes, `2` for cars and `3` for lorries. All values of vehicle type are acceptable, there is no constraint.
 * the latest type is the valid type, even if the regulator changed the type after the vehicle entered a road system.
 
 ### `TollBoothOperator`
@@ -372,7 +372,7 @@ If you want to use `async / await`, you need to be able to make it work in the V
 
 ## GUI
 
-We want you to create a simple UI with 4 pages, or 1 page with 4 tabs if you prefer. You do not need to make it look fancy or add pagination. But it has to be functional. It is ok if it requires copy / paste of addresses and secrets from the human user.
+We want you to create a simple UI with 4 pages, or 1 page with 4 tabs if you prefer. You do not need to make it look fancy or add list pagination. But it has to be functional. It is ok if it requires copy / paste of addresses and secrets from the human user.
 
 You can use the framework of your choice, and it is good manner to add some instructions on how to make it run within the VM. If there is any NodeJs package that you would like to use make sure they appear in `package.json` and you committed it too.
 
@@ -401,6 +401,24 @@ So:
   * be informed on the status of the refund or of the pending payment of the vehicle reported above.
   * no need to see its history of entry / exit.
 
+The way we will use your GUI is as follows:
+
+* go into the exam VM and clone your project there.
+* launch `ganache-cli` and copy the 10 addresses it creates. Typically we will use:
+  * 1 for a toll booth operator owner
+  * 1 for a vehicle
+  * 2 for booths
+* run `truffle migrate` from your folder
+* follow any instructions you may have to build the UI and serve it
+* open the browser **without** Metamask
+
 ## You code!
 
 This is not a gotcha exercise where a minute error makes you lose huge points. We want to see you at your best so let us know of any access issues or misunderstanding.
+
+### Submission checklist:
+
+* Did you run your code in the exam VM specific to your cohort? If you are not sure what VM this is, you probably did not.
+* Did you have 0 errors when running the tests provided?
+* Did you include `scenarios.js`?
+* Did you leave the Solidity interfaces and mocks unchanged?

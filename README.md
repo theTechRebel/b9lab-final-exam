@@ -419,6 +419,10 @@ This is not a gotcha exercise where a minute error makes you lose huge points. W
 ### Submission checklist:
 
 * Did you run your code in the exam VM specific to your cohort? If you are not sure what VM this is, you probably did not.
-* Did you have 0 errors when running the tests provided?
+* Did you have 0 errors when running the tests provided? We run many more tests on your code so you should at least aim for a 100% pass on those we gave you.
 * Did you include `scenarios.js`?
+    * Did you spell it correctly?
+    * Remember that we test your scenarios with our Solidity implementations.
 * Did you leave the Solidity interfaces and mocks unchanged?
+* Did you copy all necessary `*.sol` files in `contracts/`, and are not importing extra files for exotic paths?
+* Did you clone your repo again elsewhere and confirmed that `package.json` mentions all that is needed?

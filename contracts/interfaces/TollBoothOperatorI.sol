@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 contract TollBoothOperatorI {
 
@@ -20,12 +20,14 @@ contract TollBoothOperatorI {
      * @param vehicle The address of the vehicle that entered the road system.
      * @param entryBooth The declared entry booth by which the vehicle will enter the system.
      * @param exitSecretHashed A hashed secret that, when solved, allows the operator to pay itself.
+     * @param multiplier The vehicle's multiplier at entry.
      * @param depositedWeis The amount that was deposited as part of the entry.
      */
     event LogRoadEntered(
         address indexed vehicle,
         address indexed entryBooth,
         bytes32 indexed exitSecretHashed,
+        uint multiplier,
         uint depositedWeis);
 
     /**
@@ -61,6 +63,7 @@ contract TollBoothOperatorI {
      * @return The information pertaining to the entry of the vehicle.
      *     vehicle: the address of the vehicle that entered the system.
      *     entryBooth: the address of the booth the vehicle entered at.
+     *     multiplier: the vehicle's multiplier at entry.
      *     depositedWeis: how much the vehicle deposited when entering.
      * After the vehicle has exited, and the operator has been paid, `depositedWeis` should be returned as `0`.
      *     The `depositedWeis` should remain unchanged while there is a corresponding pending exit.
@@ -72,6 +75,7 @@ contract TollBoothOperatorI {
         returns(
             address vehicle,
             address entryBooth,
+            uint multiplier,
             uint depositedWeis);
 
     /**
@@ -160,39 +164,6 @@ contract TollBoothOperatorI {
         returns (bool success);
 
     /**
-     * @return The amount that has been collected through successful payments. This is the current
-     *   amount, it does not reflect historical fees. So this value goes back to zero after a call
-     *   to `withdrawCollectedFees`.
-     */
-    function getCollectedFeesAmount()
-        view
-        public
-        returns(uint amount);
-
-    /**
-     * Event emitted when the owner collects the fees.
-     * @param owner The account that sent the request.
-     * @param amount The amount collected.
-     */
-    event LogFeesCollected(
-        address indexed owner,
-        uint amount);
-
-    /**
-     * Called by the owner of the contract to withdraw all collected fees (not deposits) to date.
-     *     It should roll back if any other address is calling this function.
-     *     It should roll back if there is no fee to collect.
-     *     It should roll back if the transfer failed.
-     * @return success Whether the operation was successful.
-     * Emits LogFeesCollected with:
-     *     The sender of the action.
-     *     The amount collected.
-     */
-    function withdrawCollectedFees()
-        public
-        returns(bool success);
-
-    /**
      * This function is commented out otherwise it prevents compilation of the completed contracts.
      * This function overrides the eponymous function of `RoutePriceHolderI`, to which it adds the following
      * functionality:
@@ -215,6 +186,15 @@ contract TollBoothOperatorI {
     //         address entryBooth,
     //         address exitBooth,
     //         uint priceWeis)
+    //     public
+    //     returns(bool success);
+
+    /**
+     * This function is commented out otherwise it prevents compilation of the completed contracts.
+     * This function provides the same functionality with the eponymous function of `PullPaymentA`, which it
+     * overrides, and to which it adds the following requirement:
+     *     - It should roll back when the contract is in the `true` paused state.
+    // function withdrawPayment()
     //     public
     //     returns(bool success);
 

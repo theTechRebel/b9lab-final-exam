@@ -1,29 +1,20 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import { OwnedI } from "../contracts/interfaces/OwnedI.sol";
-import { Owned } from "../contracts/Owned.sol";
-import { Pausable } from "../contracts/Pausable.sol";
-import { Regulator } from "../contracts/Regulator.sol";
-import { DepositHolder } from "../contracts/DepositHolder.sol";
+import { OwnedI } from "../../contracts/interfaces/OwnedI.sol";
+import { RoutePriceHolderMock } from "../../contracts/mock/RoutePriceHolderMock.sol";
+import { TollBoothOperator } from "../../contracts/TollBoothOperator.sol";
 
-// If you have an out-of-gas error when testing this file, try launching
-// ganache-cli -l 15000000 --allowUnlimitedContractSize
+contract TestOwnedC {
 
-contract TestOwnedA {
-
-    uint instanceCount = 4;
+    uint instanceCount = 2;
 
     function createInstance(uint index) private returns(OwnedI) {
         if (index == 0) {
-            return new Owned();
+            return new RoutePriceHolderMock();
         } else if (index == 1) {
-            return new Pausable(false);
-        } else if (index == 2) {
-            return new Regulator();
-        } else if (index == 3) {
-            return new DepositHolder(1);
+            return new TollBoothOperator(true, 1, address(this));
         } else {
             revert();
         }
@@ -33,7 +24,7 @@ contract TestOwnedA {
         OwnedI owned;
         for(uint index = 0; index < instanceCount; index++) {
             owned = createInstance(index);
-            Assert.equal(owned.getOwner(), this, "Should have set owner");
+            Assert.equal(owned.getOwner(), address(this), "Should have set owner");
         }
     }
 

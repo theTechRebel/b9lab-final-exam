@@ -7,6 +7,8 @@
  * @returns {!Promise} which throws unless it hit a valid error.
  */
 module.exports = function expectedExceptionPromise(action, gasToUse) {
+    web3.eth.getTransactionReceiptMined = require("./getTransactionReceiptMined.js");
+    
     return new Promise(function(resolve, reject) {
         try {
             resolve(action());

@@ -1,20 +1,20 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import { OwnedI } from "../contracts/interfaces/OwnedI.sol";
-import { RoutePriceHolderMock } from "../contracts/mock/RoutePriceHolderMock.sol";
-import { TollBoothOperator } from "../contracts/TollBoothOperator.sol";
+import { OwnedI } from "../../contracts/interfaces/OwnedI.sol";
+import { MultiplierHolder } from "../../contracts/MultiplierHolder.sol";
+import { TollBoothHolder } from "../../contracts/TollBoothHolder.sol";
 
-contract TestOwnedC {
+contract TestOwnedB {
 
     uint instanceCount = 2;
 
     function createInstance(uint index) private returns(OwnedI) {
         if (index == 0) {
-            return new RoutePriceHolderMock();
+            return new MultiplierHolder();
         } else if (index == 1) {
-            return new TollBoothOperator(true, 1, this);
+            return new TollBoothHolder();
         } else {
             revert();
         }
@@ -24,7 +24,7 @@ contract TestOwnedC {
         OwnedI owned;
         for(uint index = 0; index < instanceCount; index++) {
             owned = createInstance(index);
-            Assert.equal(owned.getOwner(), this, "Should have set owner");
+            Assert.equal(owned.getOwner(), address(this), "Should have set owner");
         }
     }
 

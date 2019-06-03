@@ -203,7 +203,7 @@ contract TollBoothOperatorI {
      *
      * - a contract named `TollBoothOperator` that:
      *     - is `OwnedI`, `PausableI`, `DepositHolderI`, `TollBoothHolderI`,
-     *         `MultiplierHolderI`, `RoutePriceHolderI`, `RegulatedI` and `TollBoothOperatorI`.
+     *         `MultiplierHolderI`, `RoutePriceHolderI`, `RegulatedI`, `PullPaymentA`, and `TollBoothOperatorI`.
      *     - has a constructor that takes:
      *         - one `bool` parameter, the initial paused state.
      *         - one `uint` parameter, the initial deposit wei value, which cannot be 0.

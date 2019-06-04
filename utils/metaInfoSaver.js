@@ -1,12 +1,14 @@
 module.exports = function configureMetaInfoSaver(fs) {
     const validMustPass = {
-        failsProject: "Failing this test fails the whole project",
+        failsCode: "Failing this test fails the whole coding part",
         failsFile: "Failing this test fails the test file"
     };
     const collateRec = function collateRec(suite, intoObj) {
         suite.tests.forEach(test => {
             if (typeof intoObj[test.title] === "undefined") {
                 intoObj[test.title] = {};
+            } else {
+                throw new Error("you are trying to overwrite test " + test.title);
             }
             if (typeof test.b9Points !== "number") {
                 throw new Error(`no points defined for ${test.title}`);
@@ -34,7 +36,7 @@ module.exports = function configureMetaInfoSaver(fs) {
         const resultsJson = {};
         resultsJson[suite.title] = {};
         if (!fs.existsSync(path)) {
-            fs.mkdirSync(path);
+            fs.mkdirSync(path, { recursive: true });
         }
         const fullFileName = path + "/" + filename;
         if (fs.existsSync(fullFileName)) {

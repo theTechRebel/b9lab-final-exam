@@ -38,7 +38,7 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should have correct initial value", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             assert.isFalse(await regulator.isOperator(regulator.address));
             assert.isFalse(await regulator.isOperator(owner0));
             assert.isFalse(await regulator.isOperator(owner1));
@@ -51,13 +51,13 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should be possible to create an operator and return an address", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             assert.isTrue(isAddress(await regulator.createNewOperator.call(owner1, deposit0, { from: owner0 })));
         });
 
         it("should be possible to create an operator and emit events", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             const txObj = await regulator.createNewOperator(owner1, deposit0, { from: owner0 });
             assert.strictEqual(txObj.receipt.logs.length, 2);
             assert.strictEqual(txObj.logs.length, 2);
@@ -77,7 +77,7 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should be possible to create an operator and record it", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             const txObj = await regulator.createNewOperator(owner1, deposit0, { from: owner0 });
             const operator = txObj.logs[1].args.newOperator;
             assert.isTrue(await regulator.isOperator(operator));
@@ -85,7 +85,7 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should be possible to create an operator with proper values", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             const txObj = await regulator.createNewOperator(owner1, deposit0, { from: owner0 });
             const operator = await TollBoothOperator.at(txObj.logs[1].args.newOperator);
             assert.strictEqual(await operator.getOwner(), owner1);
@@ -106,13 +106,13 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should be possible to remove an operator and return true", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             assert.isTrue(await regulator.removeOperator.call(operator.address, { from: owner0 }));
         });
 
         it("should be possible to remove an operator and emit event", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             const txObj = await regulator.removeOperator(operator.address, { from: owner0 });
             assert.strictEqual(txObj.receipt.logs.length, 1);
             assert.strictEqual(txObj.logs.length, 1);
@@ -124,14 +124,14 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
 
         it("should be possible to remove an operator and record it", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             await regulator.removeOperator(operator.address, { from: owner0 });
             assert.isFalse(await regulator.isOperator(operator.address));
         });
 
         it("should be possible to remove an operator and let it live alone", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             await regulator.removeOperator(operator.address, { from: owner0 });
             assert.strictEqual(await operator.getOwner(), owner1);
             assert.strictEqual((await operator.getDeposit()).toNumber(), deposit0);

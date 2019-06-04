@@ -48,7 +48,7 @@ contract("MultiplierHolder - stress", function(accounts) {
 
             it("should cost the same gas to set multiplier on successive types", async function() {
                 this.test.b9Points = 3;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const txObjs = [];
                 // We start at 31 just in case the student mistakenly set values in the constructor in the low
                 // vehicle types
@@ -63,7 +63,7 @@ contract("MultiplierHolder - stress", function(accounts) {
 
             it("should cost the same gas to unset multiplier on successive types", async function() {
                 this.test.b9Points = 5;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 for (let i = 1; i <= count; i++) {
                     await holder.setMultiplier.sendTransaction(i, 2 * i, { from: owner0 });
                 }

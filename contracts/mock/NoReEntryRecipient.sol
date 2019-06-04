@@ -8,6 +8,8 @@ import { PullPaymentA } from "../interfaces/PullPaymentA.sol";
 contract NoReEntryRecipient {
 
     uint public expectedValue;
+    bool public happened;
+    bool public receivedOk;
 
     constructor() public {
     }
@@ -18,7 +20,9 @@ contract NoReEntryRecipient {
     }
 
     function() external payable {
-        require(PullPaymentA(msg.sender).getPayment(address(this)) == 0);
-        require(msg.value == expectedValue);
+        require(!happened);
+        happened = true;
+        receivedOk = PullPaymentA(msg.sender).getPayment(address(this)) == 0
+            && msg.value == expectedValue;
     }
 }

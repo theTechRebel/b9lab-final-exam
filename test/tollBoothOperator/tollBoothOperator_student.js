@@ -50,7 +50,7 @@ contract("TollBoothOperator", function(accounts) {
 
         it("should not be possible to deploy a TollBoothOperator with deposit 0 - 1", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             return expectedExceptionPromise(
                 () => TollBoothOperator.new(false, 0, owner0, { from: owner1, gas: maxGas }),
                 maxGas);
@@ -58,7 +58,7 @@ contract("TollBoothOperator", function(accounts) {
 
         it("should be possible to deploy a TollBoothOperator with parameters - 1", async function() {
             this.test.b9Points = 0;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             const operator = await TollBoothOperator.new(false, deposit0, owner0, { from: owner1 });
             assert.isFalse(await operator.isPaused());
             assert.strictEqual((await operator.getDeposit()).toNumber(), deposit0);
@@ -91,7 +91,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should not be possible to enter road if paused", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 await operator.setPaused(true, { from: owner1 });
                 await expectedExceptionPromise(
                     () => operator.enterRoad(
@@ -102,7 +102,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to enter road with more than required deposit", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const success = await operator.enterRoad.call(
                         booth0, hashed0, { from: vehicle0, value: (deposit0 * multiplier0) + 1 });
                 assert.isTrue(success);
@@ -145,7 +145,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to report exit road on route with known price below deposited", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 await operator.setRoutePrice(booth0, booth1, deposit0, { from: owner1 });
                 const result = await operator.reportExitRoad.call(secret0, { from: booth1 });
                 assert.strictEqual(result.toNumber(), 1);
@@ -179,7 +179,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to report exit road on route with unknown price", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const result = await operator.reportExitRoad.call(secret0, { from: booth2 });
                 assert.strictEqual(result.toNumber(), 2);
                 const txObj = await operator.reportExitRoad(secret0, { from: booth2 });
@@ -226,7 +226,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to report exit road on route with known price below deposited", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 await operator.setRoutePrice(booth0, booth1, deposit0 - 1, { from: owner1 });
                 const result = await operator.reportExitRoad.call(secret0, { from: booth1 });
                 assert.strictEqual(result.toNumber(), 1);
@@ -260,7 +260,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to report exit road on route with unknown price", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const result = await operator.reportExitRoad.call(secret0, { from: booth2 });
                 assert.strictEqual(result.toNumber(), 2);
                 const txObj = await operator.reportExitRoad(secret0, { from: booth2 });
@@ -311,7 +311,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to set the base route price below both deposits and reduce count by 1", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const success = await operator.setRoutePrice.call(booth0, booth2, deposit0, { from: owner1 });
                 assert.isTrue(success);
                 const txObj = await operator.setRoutePrice(booth0, booth2, deposit0, { from: owner1 });
@@ -363,7 +363,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to set the base route price above both deposits and reduce count by 1", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 const success = await operator.setRoutePrice.call(booth0, booth2, extraDeposit0 + extraDeposit1, { from: owner1 });
                 assert.isTrue(success);
                 const txObj = await operator.setRoutePrice(booth0, booth2, extraDeposit0 + extraDeposit1, { from: owner1 });
@@ -415,7 +415,7 @@ contract("TollBoothOperator", function(accounts) {
 
                 it("should be possible to set the base route price below both deposits then clear the second by hand", async function() {
                     this.test.b9Points = 0;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await operator.setRoutePrice(booth0, booth2, deposit0, { from: owner1 });
                     const success = await operator.clearSomePendingPayments.call(booth0, booth2, 1, { from: owner0 });
                     assert.isTrue(success);
@@ -477,7 +477,7 @@ contract("TollBoothOperator", function(accounts) {
 
             it("should be possible to withdraw if second vehicle has exited", async function() {
                 this.test.b9Points = 0;
-                this.test.b9MustPass = "failsProject";
+                this.test.b9MustPass = "failsCode";
                 await operator.reportExitRoad(secret1, { from: booth1 });
                 const txObj = await operator.withdrawPayment({ from: owner1, gasPrice: gasPrice });
                 assert.strictEqual(txObj.receipt.logs.length, 1);
@@ -558,7 +558,7 @@ contract("TollBoothOperator", function(accounts) {
 
     it("should have correct number of functions", async function() {
         this.test.b9Points = 0;
-        this.test.b9MustPass = "failsProject";
+        this.test.b9MustPass = "failsCode";
         const instance = await TollBoothOperator.new(true, deposit1, owner0, { from: owner0 });
         assert.strictEqual(Object.keys(instance).length, 45);
         // ['constructor','abi','methods','contract','removeTollBooth','setOwner','setPaused','addTollBooth',

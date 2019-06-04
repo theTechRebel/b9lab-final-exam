@@ -47,7 +47,7 @@ contract("MultiplierHolder", function(accounts) {
 
         it("should fail to deploy a " + name + " if pass value", async function() {
             this.test.b9Points = 1;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             await expectedExceptionPromise(
                 () => constructors[name](owner0, false, 1));
         });
@@ -64,42 +64,42 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should have correct initial value", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), 0);
                     assert.strictEqual((await holder.getMultiplier(type1)).toNumber(), 0);
                 });
 
                 it("should be possible to ask for multiplier from any address", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const multiplier = await holder.getMultiplier(type0, { from: owner1 });
                     assert.strictEqual(multiplier.toNumber(), 0);
                 });
 
                 it("should be possible to send successfully a transaction to getMultiplier", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await holder.getMultiplier.sendTransaction(type0, { from: owner1 });
                     assert.isTrue(txObj.receipt.status);
                 });
 
                 it("should be possible to send a transaction to getMultiplier without any event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await holder.getMultiplier.sendTransaction(type0, { from: owner1 });
                     assert.strictEqual(txObj.receipt.logs.length, 0);
                 });
 
                 it("should be possible to send a transaction to getMultiplier without changing multiplier", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await holder.getMultiplier.sendTransaction(type0, { from: owner1 });
                     assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), 0);
                 });
 
                 it("should not be possible to send a transaction with value to getMultiplier", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.getMultiplier.sendTransaction(type0, { from: owner1, value: 1, gas: maxGas }),
                         maxGas);
@@ -111,7 +111,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set multiplier if asking from wrong owner", async function() {
                     this.test.b9Points = 5;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(type0, multiplier0, { from: owner1, gas: maxGas }),
                         maxGas);
@@ -119,7 +119,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set multiplier if type is 0", async function() {
                     this.test.b9Points = 2;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(0, multiplier0, { from: owner0, gas: maxGas }),
                         maxGas);
@@ -127,7 +127,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set multiplier if no change", async function() {
                     this.test.b9Points = 2;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await holder.setMultiplier(type0, multiplier0, { from: owner0 });
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(type0, multiplier0, { from: owner0, gas: maxGas }),
@@ -136,7 +136,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set multiplier if pass value", async function() {
                     this.test.b9Points = 3;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(type0, multiplier0, { from: owner0, value: 1, gas: maxGas }),
                         maxGas);
@@ -144,14 +144,14 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should be possible to set 1 multiplier and return true", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const success = await holder.setMultiplier.call(type0, multiplier0, { from: owner0 });
                     assert.isTrue(success);
                 });
 
                 it("should be possible to set 1 multiplier and emit event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await holder.setMultiplier(type0, multiplier0, { from: owner0 });
                     assert.strictEqual(txObj.receipt.logs.length, 1);
                     assert.strictEqual(txObj.logs.length, 1);
@@ -164,7 +164,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should be possible to set 1 multiplier and update multiplier", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await holder.setMultiplier(type0, multiplier0, { from: owner0 });
                     assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), multiplier0);
                     assert.strictEqual((await holder.getMultiplier(type1)).toNumber(), 0);
@@ -183,13 +183,13 @@ contract("MultiplierHolder", function(accounts) {
 
                     it("should be possible to check getMultiplier if paused", async function() {
                         this.test.b9Points = 1;
-                        this.test.b9MustPass = "failsProject";
+                        this.test.b9MustPass = "failsCode";
                         assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), multiplier0);
                     });
 
                     it("should be possible to set multiplier if paused", async function() {
                         this.test.b9Points = 1;
-                        this.test.b9MustPass = "failsProject";
+                        this.test.b9MustPass = "failsCode";
                         await holder.setMultiplier(type0, multiplier1, { from: owner0 });
                         assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), multiplier1);
                         assert.strictEqual((await holder.getMultiplier(type1)).toNumber(), 0);
@@ -217,13 +217,13 @@ contract("MultiplierHolder", function(accounts) {
 
                     it("should be possible to set another multiplier with values " + arg.name + " and return true", async function() {
                         this.test.b9Points = 1;
-                        this.test.b9MustPass = "failsProject";
+                        this.test.b9MustPass = "failsCode";
                         assert.isTrue(await holder.setMultiplier.call(arg.type, arg.multiplier, { from: owner0 }));
                     });
 
                     it("should be possible to set another multiplier with values " + arg.name + " and emit event", async function() {
                         this.test.b9Points = 1;
-                        this.test.b9MustPass = "failsProject";
+                        this.test.b9MustPass = "failsCode";
                         const txObj = await holder.setMultiplier(arg.type, arg.multiplier, { from: owner0 });
                         assert.strictEqual(txObj.receipt.logs.length, 1);
                         assert.strictEqual(txObj.logs.length, 1);
@@ -236,7 +236,7 @@ contract("MultiplierHolder", function(accounts) {
 
                     it("should be possible to set another multiplier with values " + arg.name + " and update multiplier", async function() {
                         this.test.b9Points = 1;
-                        this.test.b9MustPass = "failsProject";
+                        this.test.b9MustPass = "failsCode";
                         await holder.setMultiplier(arg.type, arg.multiplier, { from: owner0 });
                         assert.strictEqual(
                             (await holder.getMultiplier(type0)).toNumber(),
@@ -259,7 +259,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set another multiplier if old owner", async function() {
                     this.test.b9Points = 3;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(type1, multiplier1, { from: owner0, gas: maxGas }),
                         maxGas);
@@ -267,7 +267,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should not be possible to set multiplier if same", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => holder.setMultiplier(type0, multiplier0, { from: owner1, gas: maxGas }),
                         maxGas);
@@ -275,13 +275,13 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should be possible to set another multiplier and return true", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.isTrue(await holder.setMultiplier.call(type1, multiplier1, { from: owner1 }));
                 });
 
                 it("should be possible to set another multiplier and emit event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await holder.setMultiplier(type1, multiplier1, { from: owner1 });
                     assert.strictEqual(txObj.receipt.logs.length, 1);
                     assert.strictEqual(txObj.logs.length, 1);
@@ -294,7 +294,7 @@ contract("MultiplierHolder", function(accounts) {
 
                 it("should be possible to set another multiplier and update it", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await holder.setMultiplier(type1, multiplier1, { from: owner1 });
                     assert.strictEqual((await holder.getMultiplier(type0)).toNumber(), multiplier0);
                     assert.strictEqual((await holder.getMultiplier(type1)).toNumber(), multiplier1);
@@ -308,7 +308,7 @@ contract("MultiplierHolder", function(accounts) {
 
     it("should have correct number of functions", async function() {
         this.test.b9Points = 1;
-        this.test.b9MustPass = "failsProject";
+        this.test.b9MustPass = "failsCode";
         const holder = await constructors.MultiplierHolder(owner0, false);
         assert.strictEqual(Object.keys(holder).length, 16);
         // Expected: ["constructor","methods","abi","contract","setOwner","setMultiplier","getOwner",

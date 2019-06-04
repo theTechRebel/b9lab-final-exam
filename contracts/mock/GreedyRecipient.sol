@@ -9,6 +9,8 @@ contract GreedyRecipient {
 
     uint public minGas;
     uint public expectedValue;
+    bool public happened;
+    bool public receivedOk;
 
     constructor() public {
     }
@@ -20,7 +22,8 @@ contract GreedyRecipient {
     }
 
     function() external payable {
-        require(minGas <= gasleft());
-        require(msg.value == expectedValue);
+        require(!happened);
+        happened = true;
+        receivedOk = minGas <= gasleft() && msg.value == expectedValue;
     }
 }

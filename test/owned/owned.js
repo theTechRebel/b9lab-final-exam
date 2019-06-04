@@ -63,7 +63,7 @@ contract("Owned inheritance tree", function(accounts) {
 
         it("should fail to deploy a " + name + " if pass value", async function() {
             this.test.b9Points = 1;
-            this.test.b9MustPass = "failsProject";
+            this.test.b9MustPass = "failsCode";
             await expectedExceptionPromise(() => constructors[name](owner0, 1));
         });
 
@@ -79,40 +79,40 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should have correct initial value", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.strictEqual(await owned.getOwner(), owner0);
                 });
 
                 it("should be possible to ask for owner from any address", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.strictEqual(await owned.getOwner({ from: owner1 }), owner0);
                 });
 
                 it("should be possible to successfully send a transaction to getOwner", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await owned.getOwner.sendTransaction({ from: owner1 });
                     assert.isTrue(txObj.receipt.status);
                 });
 
                 it("should be possible to send a transaction to getOwner without an event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await owned.getOwner.sendTransaction({ from: owner1 });
                     assert.strictEqual(txObj.receipt.logs.length, 0);                    
                 });
 
                 it("should be possible to send a transaction to GetOwner without changing owner", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await owned.getOwner.sendTransaction({ from: owner1 });
                     assert.strictEqual(await owned.getOwner(), owner0);
                 });
 
                 it("should not be possible to send a transaction with value to getOwner", async function() {
                     this.test.b9Points = 3;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.getOwner.sendTransaction({ from: owner1, value: 1, gas: maxGas }),
                         maxGas);
@@ -124,7 +124,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if asking from wrong owner", async function() {
                     this.test.b9Points = 5;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(owner1, { from: owner1, gas: maxGas }),
                         maxGas);
@@ -132,7 +132,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if to 0", async function() {
                     this.test.b9Points = 2;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(addressZero, { from: owner0, gas: maxGas }),
                         maxGas);
@@ -140,7 +140,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if no change", async function() {
                     this.test.b9Points = 2;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(owner0, { from: owner0, gas: maxGas }),
                         maxGas);
@@ -148,7 +148,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if pass value", async function() {
                     this.test.b9Points = 3;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(owner1, { from: owner0, value: 1, gas: maxGas }),
                         maxGas);
@@ -156,13 +156,13 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should be possible to set owner and return true", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.isTrue(await owned.setOwner.call(owner1, { from: owner0 }));
                 });
 
                 it("should be possible to set owner and emit event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await owned.setOwner(owner1, { from: owner0 });
                     assert.strictEqual(txObj.receipt.logs.length, 1);
                     assert.strictEqual(txObj.logs.length, 1);
@@ -174,7 +174,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should be possible to set owner and update owner", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await owned.setOwner(owner1, { from: owner0 });
                     assert.strictEqual(await owned.getOwner(), owner1);
                 });
@@ -189,7 +189,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if asking from wrong one", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(owner0, { from: owner0, gas: maxGas }),
                         maxGas);
@@ -197,7 +197,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should not be possible to set owner if no change", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await expectedExceptionPromise(
                         () => owned.setOwner(owner1, { from: owner1, gas: maxGas }),
                         maxGas);
@@ -205,13 +205,13 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should be possible to set owner again and return true", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     assert.isTrue(await owned.setOwner.call(owner0, { from: owner1 }));
                 });
 
                 it("should be possible to set owner again and emit event", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     const txObj = await owned.setOwner(owner0, { from: owner1 });
                     assert.strictEqual(txObj.receipt.logs.length, 1);
                     assert.strictEqual(txObj.logs.length, 1);
@@ -223,7 +223,7 @@ contract("Owned inheritance tree", function(accounts) {
 
                 it("should be possible to set owner again and update owner", async function() {
                     this.test.b9Points = 1;
-                    this.test.b9MustPass = "failsProject";
+                    this.test.b9MustPass = "failsCode";
                     await owned.setOwner(owner0, { from: owner1 });
                     assert.strictEqual(await owned.getOwner(), owner0);
                 });
@@ -236,7 +236,7 @@ contract("Owned inheritance tree", function(accounts) {
 
     it("should have correct number of functions", async function() {
         this.test.b9Points = 1;
-        this.test.b9MustPass = "failsProject";
+        this.test.b9MustPass = "failsCode";
         const owned = await constructors.Owned(owner0);
         assert.strictEqual(Object.keys(owned).length, 13);
         // Expected: ["constructor","methods","abi","contract","getOwner","setOwner","LogOwnerSet",

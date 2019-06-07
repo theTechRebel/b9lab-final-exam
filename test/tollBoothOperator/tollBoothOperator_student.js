@@ -62,6 +62,8 @@ contract("TollBoothOperator", function(accounts) {
             const operator = await TollBoothOperator.new(false, deposit0, owner0, { from: owner1 });
             assert.isFalse(await operator.isPaused());
             assert.strictEqual((await operator.getDeposit()).toNumber(), deposit0);
+            assert.strictEqual(await operator.getOwner(), owner1);
+            assert.strictEqual(await operator.getRegulator(), owner0);
         });
 
     });

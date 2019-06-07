@@ -108,8 +108,6 @@ contract TollBoothOperatorI {
      * Called by the exit booth.
      *     It should roll back when the contract is in the `true` paused state.
      *     It should roll back when the sender is not a toll booth.
-     *     It should roll back when the vehicle is no longer a registered vehicle.
-     *     It should roll back when the vehicle is no longer allowed on this road system.
      *     It should roll back if the exit is same as the entry.
      *     It should roll back if hashing the secret does not match a hashed one.
      *     It should roll back if the secret has already been reported on exit.

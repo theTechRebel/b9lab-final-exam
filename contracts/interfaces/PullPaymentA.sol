@@ -43,7 +43,7 @@ contract PullPaymentA {
      * You need to create:
      *
      * - a contract named `PullPayment` that:
-     *     - is `PullPaymentI`.
+     *     - is `PullPaymentA`.
      *     - has a constructor that takes:
      *         - no parameter.
      */        

@@ -94,7 +94,7 @@ The off-chain exchange of the secret is handled by a wave of the hand in this pr
 ### Toll booths
 
 * When faced with a vehicle that wants to enter the road system, a toll booth will confirm, off-chain, the address of the incoming vehicle.
-* If the vehicle has made the proper deposit for its type and mentioned the booth address, the booth opens the gate. This part will be simulated in tests.
+* If the vehicle has made the proper deposit for its type and mentioned the booth address, the booth opens the gate. Tests will assume that this "opens the gate" part is always successful as long as a proper contract call is made.
 
 Here too, you need not work on the off-chain exchange of address of the incoming vehicles.
 
@@ -117,7 +117,7 @@ This account will:
 
 In particular:
 
-* if a vehicle just completed a route for which there is a base price of `0`, the owner should put a price to it before it can unlock the deposit.
+* if a vehicle just completed a route for which there is a base price of `0`, the `TollBoothOperator` owner should put a price to the route before anyone can unlock the deposit.
 * if a vehicle type has a multiplier of `0`, then the road system will not let vehicles of this type enter. It will let them exit, though.
 
 ## Smart contracts
@@ -423,7 +423,7 @@ So:
   * no need to see its pending payments.
 * a page for individual toll booths, which allows it to:
   * report a vehicle exit.
-  * be informed on the status of the refund or of the pending payment of the vehicle reported above.
+  * be informed on the status of the refund or of the pending payment of the vehicle reported above. Typically a row in a table stating normal exit or pending payment.
   * no need to see its history of entry / exit.
 
 The way we will use your GUI is as follows:

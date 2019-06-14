@@ -20,7 +20,7 @@ contract RegulatorI {
      * Event emitted when a new vehicle has been registered with its type.
      * @param sender The account that ran the action.
      * @param vehicle The address of the vehicle that is registered.
-     * @param vehicleType The VehicleType that the vehicle was registered as.
+     * @param vehicleType The VehicleType that the vehicle was just registered as.
      */
     event LogVehicleTypeSet(
         address indexed sender,
@@ -127,6 +127,6 @@ contract RegulatorI {
      *
      * - a contract named `Regulator` that:
      *     - is `OwnedI` and `RegulatorI`.
-     *     - has a constructor that takes no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */        
 }

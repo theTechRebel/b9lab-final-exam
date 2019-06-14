@@ -68,6 +68,6 @@ contract TollBoothHolderI {
      *
      * - a contract named `TollBoothHolder` that:
      *     - is `OwnedI`, `TollBoothHolderI`.
-     *     - has a constructor that takes no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */        
 }

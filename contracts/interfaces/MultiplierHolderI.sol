@@ -50,6 +50,6 @@ contract MultiplierHolderI {
      *
      * - a contract named `MultiplierHolder` that:
      *     - is `OwnedI` and `MultiplierHolderI`.
-     *     - has a constructor that takes no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */        
 }

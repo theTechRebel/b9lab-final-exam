@@ -112,6 +112,7 @@ contract TollBoothOperatorI {
      *     It should roll back if the exit is same as the entry.
      *     It should roll back if hashing the secret does not match a hashed one.
      *     It should roll back if the secret has already been reported on exit.
+     * After a successful exit, the storage should be zeroed out as much as possible.
      * @param exitSecretClear The secret given by the vehicle as it passed by the exit booth. Passing a `0` secret is a valid input.
      * @return status:
      *   1: success, -> emits LogRoadExited with:
@@ -145,6 +146,7 @@ contract TollBoothOperatorI {
      *     It should roll back if booths are not really booths.
      *     It should roll back if there are fewer than `count` pending payments that are solvable.
      *     It should roll back if `count` is `0`.
+     * After a successful clearing, the storage should be zeroed out as much as possible.
      * @param entryBooth the entry booth that has pending payments.
      * @param exitBooth the exit booth that has pending payments.
      * @param count the number of pending payments to clear for the exit booth.
@@ -169,6 +171,7 @@ contract TollBoothOperatorI {
      *     - If relevant, it will release 1 pending payment for this route. As part of this payment
      *       release, it will emit the appropriate `LogRoadExited` event.
      *     - It should be possible to call it even when the contract is in the `true` paused state.
+     * After a successful clearing, the storage should be zeroed out as much as possible.
      * Emits LogRoadExited, if applicable, with:
      *       The address of the exit booth.
      *       The hashed secret corresponding to the vehicle trip.

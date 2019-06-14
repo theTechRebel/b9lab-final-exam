@@ -59,6 +59,6 @@ contract RoutePriceHolderI {
      *
      * - a contract named `RoutePriceHolder` that:
      *     - is `OwnedI`, `TollBoothHolderI`, and `RoutePriceHolderI`.
-     *     - has a constructor that takes no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */
 }

@@ -140,7 +140,7 @@ Additionally:
 
 * the regulator collects no fees.
 * a type of `0` denotes an unregistered vehicle.
-* for mnemonics only, you can assign type `1` for motorbikes, `2` for cars and `3` for lorries. All values of vehicle type are acceptable, there is no constraint other than `> 0`, there is no predefined default.
+* for mnemonics only, you can assign type `1` for motorbikes, `2` for cars and `3` for lorries (a.k.a. trucks). All values of vehicle type are acceptable, there is no constraint other than `> 0`, there is no predefined default.
 * the latest type is the valid type, even if the regulator changed the type after the vehicle entered a road system.
 
 ### `TollBoothOperator`
@@ -441,6 +441,12 @@ The way we will use your GUI is as follows:
 ## You code!
 
 This is not a gotcha exercise where a minute error makes you lose huge points. We want to see you at your best so let us know of any access issues or misunderstanding.
+
+If your tests run out of gas too easily, launch Ganache like so:
+
+```sh
+$ ganache-cli --gasLimit 15000000 --allowUnlimitedContractSize --host 0.0.0.0
+```
 
 ### Submission checklist:
 

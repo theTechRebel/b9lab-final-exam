@@ -33,6 +33,6 @@ contract OwnedI {
      *     - is a `OwnedI`.
      *     - has a modifier named `fromOwner` that rolls back the transaction if the
      * transaction sender is not the owner.
-     *     - has a constructor that takes no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */
 }

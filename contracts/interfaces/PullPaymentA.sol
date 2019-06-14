@@ -44,7 +44,6 @@ contract PullPaymentA {
      *
      * - a contract named `PullPayment` that:
      *     - is `PullPaymentA`.
-     *     - has a constructor that takes:
-     *         - no parameter.
+     *     - has a constructor that takes no parameter, or you omit it.
      */        
 }

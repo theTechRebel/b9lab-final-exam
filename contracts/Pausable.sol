@@ -6,7 +6,7 @@ import './interfaces/PausableI.sol';
     /**
      * contract`Pausable` extends: `OwnedI``PausableI`
      */
-contract Pausable is OwnedI, PausableI, Owned{
+contract Pausable is Owned, PausableI{
     /**
      * variable @param paused
      * holds the value of the pausable state

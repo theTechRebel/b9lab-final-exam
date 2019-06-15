@@ -59,3 +59,17 @@ contract Owned is OwnedI{
         owner = contractOwner;
     }
 }
+
+import './Pausable.sol';
+contract OwnedFactory is Pausable, Owned{
+    address[] public ownedContracts;
+    event LogNewOwned(address indexed owner, address indexed _contract);
+
+    function createOwned() public fromOwner whenNotPaused returns(address ownedContract){
+        Owned owned = new Owned();
+        owned.setOwner(msg.sender);
+        ownedContracts.push(address(owned));
+        emit LogNewOwned(msg.sender,address(owned));
+        return address(owned);
+    }
+}

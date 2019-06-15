@@ -7,7 +7,7 @@ import './interfaces/OwnedI.sol';
      */
 contract Owned is OwnedI{
     /**
-     * variable @param owner
+     * variable @param contractOwner
      * holds the value of the current owner
      * set in constructor upon contract deployment
      * is private so that accessing it is only through getOwner()

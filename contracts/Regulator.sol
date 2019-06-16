@@ -1,41 +1,15 @@
 pragma solidity ^0.5.0;
 
-import './interfaces/OwnedI.sol';
+import './Owned.sol';
 import './interfaces/RegulatorI.sol';
-contract Regulator is RegulatorI{
-
-    /**
-     * represents a vehicle
-     * @param owner is the address of the vehicle owner
-     * @param vehicleType is the type / class
-     * 0 is no type - recognised types 1,2,3....n
-     */
-    struct Vehicle{
-        address owner;
-        uint vehicleType;
-    }
-
+import './TollBoothOperator.sol';
+contract Regulator is Owned, RegulatorI{
     /**
      * represents a collection of Registered Vehicles
-     * @param address is the vehicle
-     * @param Vehicle represents a vehicle struct
+     * @param address is the vehicle address
+     * @param uint represents a vehicle type
      */
-    mapping (address=>Vehicle) registeredVehicles;
-
-    /**
-     * Instance of the Owned Contract
-     * Supplied by OwnedFactory
-     */
-    OwnedI private owned;
-    constructor(address _owned) public {
-        owned = OwnedI(_owned);
-    }
-
-    /**modifier function that validates the owner*/
-    modifier fromOwner(){
-        require(msg.sender == owned.getOwner(),"You are not the owner");
-        _;
-    }
+    mapping (address=>uint) registeredVehicles;
 
     /**
      * Called by the owner of the regulator to register a new vehicle with its VehicleType.
@@ -57,8 +31,8 @@ contract Regulator is RegulatorI{
         fromOwner
         returns(bool success){
             require(vehicle != address(0),"Provide a valid address");
-            registeredVehicles[vehicle].owner = msg.sender;
-            registeredVehicles[vehicle].vehicleType = vehicleType;
+            require(registeredVehicles[vehicle]!=vehicleType,"No state change detected");
+            registeredVehicles[vehicle] = vehicleType;
             emit LogVehicleTypeSet(msg.sender,vehicle,vehicleType);
             success = true;
         }
@@ -72,21 +46,25 @@ contract Regulator is RegulatorI{
         view
         public
         returns(uint vehicleType){
-           vehicleType = registeredVehicles[vehicle].vehicleType;
+           vehicleType = registeredVehicles[vehicle];
         }
 
     /**
-     * Event emitted when a new TollBoothOperator has been created and registered.
-     * @param sender The account that ran the action.
-     * @param newOperator The newly created TollBoothOperator contract.
-     * @param owner The rightful owner of the TollBoothOperator.
-     * @param depositWeis The initial deposit amount set in the TollBoothOperator.
+     * represents a TollBoothOperator
+     * @param owner is the address of the Toll Booth owner
+     * @param deposit is the initial amount deposited
      */
-    event LogTollBoothOperatorCreated(
-        address indexed sender,
-        address indexed newOperator,
-        address indexed owner,
-        uint depositWeis);
+    struct TBOperators{
+        address owner;
+        uint deposit;
+    }
+
+    /**
+     * represents a collection of Registered Toll Booth Operators
+     * @param address is the tollbooth address
+     * @param TollBoothOperator represents a TollBoothOperator struct
+     */
+    mapping (address=>TBOperators) registeredTollBoothOperators;
 
     /**
      * Called by the owner of the regulator to deploy a new TollBoothOperator onto the network.
@@ -108,17 +86,17 @@ contract Regulator is RegulatorI{
         public
         fromOwner
         returns(TollBoothOperatorI newOperator){
-            
+            require(owner!=getOwner(),"You can not be the onwer of the toll booth");
+            TollBoothOperator tbOperator = new TollBoothOperator(false,deposit,address(this));
+            registeredTollBoothOperators[address(tbOperator)].deposit = deposit;
+            registeredTollBoothOperators[address(tbOperator)].owner = owner;
+            emit LogTollBoothOperatorCreated(
+                msg.sender,
+                address(tbOperator),
+                owner,
+                deposit);
+            newOperator = tbOperator;
         }
-
-    /**
-     * Event emitted when a TollBoothOperator has been removed from the list of approved operators.
-     * @param sender The account that ran the action.
-     * @param operator The removed TollBoothOperator.
-     */
-    event LogTollBoothOperatorRemoved(
-        address indexed sender,
-        address indexed operator);
 
     /**
      * Called by the owner of the regulator to remove a previously deployed TollBoothOperator from
@@ -133,7 +111,16 @@ contract Regulator is RegulatorI{
      */
     function removeOperator(address operator)
         public
-        returns(bool success);
+        fromOwner
+        returns(bool success){
+            require(registeredTollBoothOperators[operator].owner != address(0),"TollBoothOperator unkown");
+            registeredTollBoothOperators[operator].owner = address(0);
+            registeredTollBoothOperators[operator].deposit = 0;
+            emit LogTollBoothOperatorRemoved(
+                    msg.sender,
+                    operator);
+            success = true;
+        }
 
     /**
      * @param operator The address of the TollBoothOperator to test. It should accept a 0 address.
@@ -142,6 +129,9 @@ contract Regulator is RegulatorI{
     function isOperator(address operator)
         view
         public
-        returns(bool indeed);
+        returns(bool indeed){
+            if(registeredTollBoothOperators[operator].owner != address(0))
+                    indeed = true;
+        }
 
 }

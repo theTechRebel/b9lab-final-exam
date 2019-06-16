@@ -1,22 +1,8 @@
 pragma solidity ^0.5.0;
 
-import './interfaces/OwnedI.sol';
-contract MultiplierHolder{
-    /**
-     * Instance of the Owned Contract
-     * Supplied by OwnedFactory
-     */
-    OwnedI private owned;
-    constructor(address _owned) public {
-        owned = OwnedI(_owned);
-    }
-
-     /**modifier function that validates the owner*/
-    modifier fromOwner(){
-        require(msg.sender == owned.getOwner(),"You are not the owner");
-        _;
-    }
-
+import './Owned.sol';
+import './interfaces/MultiplierHolderI.sol';
+contract MultiplierHolder is Owned, MultiplierHolderI{
     mapping(uint=>uint) vehicleTypeMultiplier;
     /**
      * Called by the owner of the MultiplierHolder.
@@ -41,6 +27,10 @@ contract MultiplierHolder{
         returns(bool success){
             require(vehicleType != 0,"Type 0 is not a vehicle");
             vehicleTypeMultiplier[vehicleType] = multiplier;
+            emit LogMultiplierSet(
+            msg.sender,
+            vehicleType,
+            multiplier);
             return true;
         }
 

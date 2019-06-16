@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 
 import './interfaces/RegulatedI.sol';
-import './interfaces/RegulatorI.sol';
 
 contract Regulated is RegulatedI{
 
@@ -14,7 +13,7 @@ contract Regulated is RegulatedI{
      * constructor that takes one `address` parameter, the initial regulator; it should roll back the transaction if the initial regulator argument is `0`.
      */
     constructor(address _regulator) public {
-        require(_regulator!=address(0),"Supply a correct regulator");
+        require(_regulator!=address(0),"Supply a valid regulator address");
         currentRegulator = RegulatorI(_regulator);
         emit LogRegulatorSet(
         address(0),
@@ -41,6 +40,9 @@ contract Regulated is RegulatedI{
             require(msg.sender==_regulator,"You are not the regulator");
             require(_regulator!=newRegulator,"Same address cannot be set as regulator");
             currentRegulator = RegulatorI(newRegulator);
+            emit LogRegulatorSet(
+            _regulator,
+            newRegulator);
             return true;
         }
 

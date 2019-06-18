@@ -32,11 +32,14 @@
     "style-loader": "^0.13.1",
     "truffle": "v5.0.22",
     "truffle-contract": "^1.1.11",
-    "web3": "^0.18.2",
+    "web3": "^0.18.4",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   },
   "dependencies": {
-    "bluebird": "^3.5.0"
+    "bluebird": "^3.5.5",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "openzeppelin-solidity": "^2.3.0"
   }
 }

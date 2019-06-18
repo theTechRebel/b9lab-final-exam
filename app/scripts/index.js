@@ -45,8 +45,9 @@ App = {
     },
   
     initContract: function() {
-/*
-      Splitter.setProvider(App.web3Provider);
+
+      Regulator.setProvider(App.web3Provider);
+      TollBoothOperator.setProvider(App.web3Provider);
       console.log("app loaded");
       web3.eth.getAccounts().then(function(accounts){
         if(accounts.length == 0 ){
@@ -60,14 +61,13 @@ App = {
 
       App.getContractBalance();
       return App.bindEvents();
-      */
     },
     bindEvents: async function() {
      // $(document).on('click', '#split', App.handleSplit);
      // $(document).on('click','#withdraw', App.handleWithdraw);
   },
   getContractBalance: async function(){
-      var contract = await Splitter.deployed();
+      var contract = await TollBoothOperator.deployed();
       console.log(contract);
       console.log(contract.address);
       var bal = await web3.eth.getBalance(contract.address);

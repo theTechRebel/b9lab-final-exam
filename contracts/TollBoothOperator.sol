@@ -9,15 +9,16 @@ import './TollBoothHolder.sol';
 import './RoutePriceHolder.sol';
 import './PullPayment.sol';
 import './interfaces/TollBoothOperatorI.sol';
+import './interfaces/RoutePriceHolderI.sol';
 
 contract TollBoothOperator is
 Owned,
+TollBoothHolder,
+RoutePriceHolderI,
 Pausable,
 Regulated,
 MultiplierHolder,
 DepositHolder,
-TollBoothHolder,
-RoutePriceHolder,
 PullPayment,
 TollBoothOperatorI{
 
@@ -35,7 +36,7 @@ TollBoothOperatorI{
     }
 
     struct VehicleEntry{
-        address vehicle;
+        address payable vehicle;
         address entryBooth;
         uint multiplier;
         uint depositedWeis;
@@ -94,7 +95,7 @@ TollBoothOperatorI{
             require(multiplier!=0,"Vehicle not allowed on this route");
             require(isTollBooth(entryBooth)==true,"This is not a toll booth");
             uint amountToPay = getDeposit().mul(multiplier);
-            require(msg.value>amountToPay,"less than deposit * multiplier was sent");
+            require(msg.value>=amountToPay,"less than deposit * multiplier was sent");
             require(usedSecrets[exitSecretHashed].vehicle==address(0),"This secret has been used");
             usedSecrets[exitSecretHashed].vehicle = msg.sender;
             usedSecrets[exitSecretHashed].entryBooth = entryBooth;
@@ -136,12 +137,13 @@ TollBoothOperatorI{
         returns (uint status){
             require(isTollBooth(msg.sender)==true,"Sender is not a toll booth");
             bytes32 hash = hashSecret(exitSecretClear);
+            address payable vehicle = usedSecrets[hash].vehicle;
             address entryBooth = usedSecrets[hash].entryBooth;
             uint depositedWei = usedSecrets[hash].depositedWeis;
-            require(usedSecrets[hash].vehicle!=address(0),"This secret has not been used");
+            uint multiplier = usedSecrets[hash].multiplier;
+            require(vehicle!=address(0),"This secret has not been used");
             require(entryBooth!=msg.sender,"Exit is the same as entry");
             require(depositedWei!=0,"secret has already been reported on exit");
-
             uint fee = getRoutePrice(entryBooth,msg.sender);
             if(fee==0){
                 emit LogPendingPayment(
@@ -154,12 +156,25 @@ TollBoothOperatorI{
             }else{
                 usedSecrets[hash].depositedWeis = 0;
                 usedSecrets[hash].multiplier = 0;
-                usedSecrets[hash].entryBooth = address(0);
-                emit LogRoadExited(
-                msg.sender,
-                hash,
-                fee,
-                depositedWei.sub(fee));
+                usedSecrets[hash].vehicle = address(0);
+                fee = fee.mul(multiplier);
+                if(depositedWei>fee){
+                    payments[getOwner()] = payments[getOwner()].add(fee);
+                    uint amount = depositedWei.sub(fee);
+                    payments[vehicle] = payments[vehicle].add(amount);
+                    emit LogRoadExited(
+                    msg.sender,
+                    hash,
+                    fee,
+                    amount);
+                }else{
+                    payments[getOwner()] = payments[getOwner()].add(depositedWei);
+                    emit LogRoadExited(
+                    msg.sender,
+                    hash,
+                    depositedWei,
+                    0);
+                }
                 status = 1;
             }
         }
@@ -228,26 +243,60 @@ TollBoothOperatorI{
         whenNotPaused
         returns (bool success){
             require(isTollBooth(entryBooth)==true&&isTollBooth(exitBooth)==true,"Some booths are not realy booths");
-            uint _count = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))].length;
+            uint pending = getPendingPaymentCount(entryBooth,exitBooth);
             require(count>0,"Count cannot be 0");
-            require(_count>=count,"There are fewer pending payments");
+            require(pending>=count,"There are fewer pending payments");
             uint fee = getRoutePrice(entryBooth,exitBooth);
-            for(uint i = count.sub(1);i>0;i--){
-                bytes32 hash = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][i];
-                emit LogRoadExited(
-                exitBooth,
-                hash,
-                fee,
-                usedSecrets[hash].depositedWeis.sub(fee));
+            bytes32 routeHash = keccak256(abi.encode(entryBooth,exitBooth));
+            for(uint i = 0;i<=(count-1);i++){
+                bytes32 hash = pendingPayments[routeHash][i];
+                if(hash!=0){
+                uint multiplier = usedSecrets[hash].multiplier;
+                uint depositedWei = usedSecrets[hash].depositedWeis;
+                address vehicle = usedSecrets[hash].vehicle;
 
                 usedSecrets[hash].depositedWeis = 0;
                 usedSecrets[hash].multiplier = 0;
-                usedSecrets[hash].entryBooth = address(0);
-                delete pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][i];
+                usedSecrets[hash].vehicle = address(0);
+
+                fee = fee.mul(multiplier);
+                if(depositedWei>fee){
+                    uint amount = depositedWei.sub(fee);
+                    payments[vehicle] = payments[vehicle].add(amount);
+                    payments[getOwner()] = payments[getOwner()].add(fee);
+                    emit LogRoadExited(
+                    exitBooth,
+                    hash,
+                    fee,
+                    amount);
+                }else{
+                    payments[getOwner()] = payments[getOwner()].add(depositedWei);
+                    emit LogRoadExited(
+                    exitBooth,
+                    hash,
+                    depositedWei,
+                    0);
+                }
+            }else{
+                success = false;
             }
+            }
+            for (pending = 0; pending<getPendingPaymentCount(entryBooth,exitBooth)-1; pending++){
+                    pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][pending] = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][pending+1];
+                }
+                pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))].length--;
             success = true;
         }
 
+    mapping(bytes32=>uint) routePrice;
+    function getRoutePrice(
+            address entryBooth,
+            address exitBooth)
+        view
+        public
+        returns(uint priceWeis){
+            priceWeis = routePrice[keccak256(abi.encode(entryBooth,exitBooth))];
+        }
     /**
      * This function is commented out otherwise it prevents compilation of the completed contracts.
      * This function overrides the eponymous function of `RoutePriceHolderI`, to which it adds the following
@@ -271,33 +320,50 @@ TollBoothOperatorI{
          returns(bool success){
             require(entryBooth!=exitBooth,"Entry and exit booths are the same");
             require(entryBooth!=address(0) && exitBooth!=address(0),"Both addresses must be valid");
-            require(isTollBooth(entryBooth)==true&&isTollBooth(exitBooth),"The booths are not registered");
+            require(isTollBooth(entryBooth)==true && isTollBooth(exitBooth)==true,"The booths are not registered");
             bytes32 routeHash = keccak256(abi.encode(entryBooth,exitBooth));
             require(routePrice[routeHash]!=priceWeis,"There is no change in price");
             routePrice[routeHash] = priceWeis;
+            uint pending = getPendingPaymentCount(entryBooth,exitBooth);
             emit LogRoutePriceSet(
             msg.sender,
             entryBooth,
             exitBooth,
             priceWeis);
-
-            bytes32 hash = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][0];
-
-            if(hash!=0){
-                emit LogRoadExited(
-                exitBooth,
-                hash,
-                priceWeis,
-                usedSecrets[hash].depositedWeis.sub(priceWeis));
-
+            if(pending>0){
+                //clearSomePendingPayments(entryBooth,exitBooth,1);
+                bytes32 hash = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][0];
+                uint multiplier = usedSecrets[hash].multiplier;
+                uint depositedWei = usedSecrets[hash].depositedWeis;
+                address vehicle = usedSecrets[hash].vehicle;
                 usedSecrets[hash].depositedWeis = 0;
                 usedSecrets[hash].multiplier = 0;
-                usedSecrets[hash].entryBooth = address(0);
-                delete pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][0];
+                usedSecrets[hash].vehicle = address(0);
+                priceWeis = priceWeis.mul(multiplier);
+                if(depositedWei>priceWeis){
+                    uint amount = depositedWei.sub(priceWeis);
+                    payments[vehicle] = payments[vehicle].add(amount);
+                    payments[getOwner()] = payments[getOwner()].add(priceWeis);
+                    emit LogRoadExited(
+                    exitBooth,
+                    hash,
+                    priceWeis,
+                    amount);
+                }else{
+                    payments[getOwner()] = payments[getOwner()].add(depositedWei);
+                    emit LogRoadExited(
+                    exitBooth,
+                    hash,
+                    depositedWei,
+                    0);
+                }
+                for (pending = 0; pending<getPendingPaymentCount(entryBooth,exitBooth)-1; pending++){
+                    pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][pending] = pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))][pending+1];
+                }
+                pendingPayments[keccak256(abi.encode(entryBooth,exitBooth))].length--;
             }
-            return true;
+            success = true;
          }
-
     /**
      * This function is commented out otherwise it prevents compilation of the completed contracts.
      * This function provides the same functionality with the eponymous function of `PullPaymentA`, which it
@@ -309,7 +375,7 @@ TollBoothOperatorI{
          whenNotPaused
          returns(bool success){
             uint _amount = getPayment(msg.sender);
-            asyncPayTo(msg.sender, _amount);
+            asyncPayTo(msg.sender,_amount);
             success = true;
          }
 }

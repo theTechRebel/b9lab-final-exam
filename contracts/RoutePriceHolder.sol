@@ -1,11 +1,12 @@
 pragma solidity ^0.5.0;
 
 import './Owned.sol';
-import './TollBoothHolder.sol';
+import './interfaces/TollBoothHolderI.sol';
 import './interfaces/RoutePriceHolderI.sol';
 
-contract RoutePriceHolder is Owned, RoutePriceHolderI, TollBoothHolder{
-
+contract RoutePriceHolder is Owned,TollBoothHolderI,RoutePriceHolderI{
+    constructor() public {
+    }
     mapping(bytes32=>uint) routePrice;
     /**
      * Called by the owner of the RoutePriceHolder.
@@ -34,7 +35,7 @@ contract RoutePriceHolder is Owned, RoutePriceHolderI, TollBoothHolder{
         returns(bool success){
             require(entryBooth!=exitBooth,"Entry and exit booths are the same");
             require(entryBooth!=address(0) && exitBooth!=address(0),"Both addresses must be valid");
-            require(isTollBooth(entryBooth)==true&&isTollBooth(exitBooth),"The booths are not registered");
+            require(isTollBooth(entryBooth)==true && isTollBooth(exitBooth)==true,"The booths are not registered");
             bytes32 routeHash = keccak256(abi.encode(entryBooth,exitBooth));
             require(routePrice[routeHash]!=priceWeis,"There is no change in price");
             routePrice[routeHash] = priceWeis;
@@ -43,7 +44,7 @@ contract RoutePriceHolder is Owned, RoutePriceHolderI, TollBoothHolder{
             entryBooth,
             exitBooth,
             priceWeis);
-            return true;
+            success = true;
         }
 
     /**

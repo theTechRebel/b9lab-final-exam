@@ -59,16 +59,17 @@ contract("Regulator, Toll Booth Operator", function(accounts) {
             this.test.b9Points = 0;
             this.test.b9MustPass = "failsCode";
             const txObj = await regulator.createNewOperator(owner1, deposit0, { from: owner0 });
-            assert.strictEqual(txObj.receipt.logs.length, 2);
-            assert.strictEqual(txObj.logs.length, 2);
+
+            assert.strictEqual(txObj.receipt.logs.length, 3);
+            assert.strictEqual(txObj.logs.length, 3);
             const logCreated = txObj.logs[1];
             assert.strictEqual(logCreated.event, "LogTollBoothOperatorCreated");
             assert.strictEqual(logCreated.args.sender, owner0);
             const operator = logCreated.args.newOperator;
             assert.strictEqual(logCreated.args.owner, owner1);
             assert.strictEqual(logCreated.args.depositWeis.toNumber(), deposit0);
-
-            const logChangedOwner = txObj.logs[0];
+            
+            const logChangedOwner = txObj.logs[2];
             assert.strictEqual(logChangedOwner.event, "LogOwnerSet");
             assert.strictEqual(logChangedOwner.address, operator);
             assert.strictEqual(logChangedOwner.args.previousOwner, regulator.address);

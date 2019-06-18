@@ -6,17 +6,25 @@ import './SafeMath.sol';
 contract PullPayment is PullPaymentA{
     using SafeMath for uint;
 
-    mapping(address=>uint) private payments;
+    mapping(address=>uint) internal payments;
     /**
      * Called by a child contract to pay an address by way of withdraw pattern.
      * @param whom The account that is to receive the amount.
      * @param amount The amount that is to be received.
-     */
+    
     function asyncPayTo(address whom, uint amount) internal{
-        require(amount > 0,"You can not withdraw 0 ether");
+        if(amount > 0){
+        payments[whom] = payments[whom].add(amount);
+        }else{
+            payments[whom] = 0;
+        }
+    } */
+
+    function asyncPayTo(address whom, uint amount) internal{
+        require(amount>0,"You have no ether to withdraw");
+        payments[whom] = 0;
         emit LogPaymentWithdrawn(whom,amount);
-        payments[whom] = payments[whom].sub(amount);
-        msg.sender.call.value(amount);
+        whom.call.value(amount)("");
     }
 
     /**
@@ -36,7 +44,7 @@ contract PullPayment is PullPaymentA{
             require(_amount>0,"You have no ether to withdraw");
             emit LogPaymentWithdrawn(msg.sender,_amount);
             payments[msg.sender] = 0;
-            msg.sender.call.value(_amount);
+            msg.sender.call.value(_amount)("");
             success = true;
         }
 

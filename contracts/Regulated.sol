@@ -16,7 +16,7 @@ contract Regulated is RegulatedI{
         require(_regulator!=address(0),"Supply a valid regulator address");
         currentRegulator = RegulatorI(_regulator);
         emit LogRegulatorSet(
-        address(0),
+        _regulator,
         _regulator);
     }
 

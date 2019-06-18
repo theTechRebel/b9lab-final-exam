@@ -36,6 +36,7 @@ contract Pausable is Owned,PausableI{
     function setPaused(bool newState) public fromOwner returns(bool success){
         require(newState != paused,"Supply a different state");
         paused = newState;
+        emit LogPausedSet(msg.sender, paused);
         success = true;
     }
 
@@ -43,7 +44,7 @@ contract Pausable is Owned,PausableI{
      * modifier named `whenPaused` that rolls back the transaction if the contract is in the `false` paused state.
      */
      modifier whenPaused(){
-         require(paused == true,"Contract is not paused");
+         require(paused == true,"Contract is paused");
          _;
      }
 
@@ -51,7 +52,7 @@ contract Pausable is Owned,PausableI{
      * modifier named `whenNotPaused` that rolls back the transaction if the contract is in the `true` paused state
      */
      modifier whenNotPaused(){
-         require(paused == false,"Contract is paused");
+         require(paused == false,"Contract is not paused");
          _;
      }
 

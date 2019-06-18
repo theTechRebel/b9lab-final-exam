@@ -21,7 +21,7 @@ contract Owned is OwnedI{
      */
     constructor() public{
         contractOwner = msg.sender;
-        emit LogOwnerSet(address(0), msg.sender);
+        emit LogOwnerSet(msg.sender, msg.sender);
     }
 
     /**
@@ -47,8 +47,8 @@ contract Owned is OwnedI{
         address _owner = contractOwner;
         require(newOwner != address(0),"Supply a valid address");
         require(newOwner != _owner,"You are alread the owner");
-        contractOwner = msg.sender;
-        emit LogOwnerSet(_owner, msg.sender);
+        contractOwner = newOwner;
+        emit LogOwnerSet(_owner, newOwner);
         success = true;
     }
 

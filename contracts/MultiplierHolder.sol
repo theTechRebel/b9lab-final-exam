@@ -3,6 +3,8 @@ pragma solidity ^0.5.0;
 import './Owned.sol';
 import './interfaces/MultiplierHolderI.sol';
 contract MultiplierHolder is Owned, MultiplierHolderI{
+    constructor() public {
+    }
     mapping(uint=>uint) vehicleTypeMultiplier;
     /**
      * Called by the owner of the MultiplierHolder.
@@ -26,6 +28,7 @@ contract MultiplierHolder is Owned, MultiplierHolderI{
         fromOwner
         returns(bool success){
             require(vehicleType != 0,"Type 0 is not a vehicle");
+            require(vehicleTypeMultiplier[vehicleType]!=multiplier,"Must set multiplier only when there is a change");
             vehicleTypeMultiplier[vehicleType] = multiplier;
             emit LogMultiplierSet(
             msg.sender,

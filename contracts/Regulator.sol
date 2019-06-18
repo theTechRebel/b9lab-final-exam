@@ -2,8 +2,11 @@ pragma solidity ^0.5.0;
 
 import './Owned.sol';
 import './interfaces/RegulatorI.sol';
+import './interfaces/TollBoothOperatorI.sol';
 import './TollBoothOperator.sol';
-contract Regulator is Owned, RegulatorI{
+contract Regulator is Owned,RegulatorI{
+    constructor() public {
+    }
     /**
      * represents a collection of Registered Vehicles
      * @param address is the vehicle address
@@ -87,15 +90,17 @@ contract Regulator is Owned, RegulatorI{
         fromOwner
         returns(TollBoothOperatorI newOperator){
             require(owner!=getOwner(),"You can not be the onwer of the toll booth");
-            TollBoothOperator tbOperator = new TollBoothOperator(false,deposit,address(this));
-            registeredTollBoothOperators[address(tbOperator)].deposit = deposit;
-            registeredTollBoothOperators[address(tbOperator)].owner = owner;
+            require(owner != address(0),"Supply a valid address");
+            TollBoothOperator operator = new TollBoothOperator(true,deposit,address(this));
+            registeredTollBoothOperators[address(operator)].deposit = deposit;
+            registeredTollBoothOperators[address(operator)].owner = owner;
             emit LogTollBoothOperatorCreated(
                 msg.sender,
-                address(tbOperator),
+                address(operator),
                 owner,
                 deposit);
-            newOperator = tbOperator;
+            operator.setOwner(owner);
+            newOperator = operator;
         }
 
     /**
@@ -130,8 +135,11 @@ contract Regulator is Owned, RegulatorI{
         view
         public
         returns(bool indeed){
-            if(registeredTollBoothOperators[operator].owner != address(0))
-                    indeed = true;
+            if(registeredTollBoothOperators[operator].owner != address(0)){
+                indeed = true;
+            }else{
+                indeed = false;
+            }
         }
 
 }

@@ -2,9 +2,10 @@ pragma solidity ^0.5.0;
 
 import './Owned.sol';
 import './interfaces/TollBoothHolderI.sol';
-contract TollBoothHolder is Owned, TollBoothHolderI{
-
-    mapping(address=>bool) public tollBooths;
+contract TollBoothHolder is Owned,TollBoothHolderI{
+    constructor() public {
+    }
+    mapping(address=>bool) private tollBooths;
 
     /**
      * Called by the owner of the TollBoothHolder.
@@ -25,6 +26,7 @@ contract TollBoothHolder is Owned, TollBoothHolderI{
         returns(bool success){
             require(tollBooth!=address(0),"Supply a valid toll booth");
             require(tollBooths[tollBooth]==false,"This is already a toll Booth");
+            tollBooths[tollBooth] = true;
             emit LogTollBoothAdded(
             msg.sender,
             tollBooth);

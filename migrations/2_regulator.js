@@ -1,20 +1,37 @@
 const Regulator = artifacts.require("Regulator");
 const TollBoothOperator = artifacts.require("TollBoothOperator");
-module.exports = async function(deployer) {
-        const accounts = await web3.eth.getAccounts();
-        const regulatorcontract = await deployer.deploy(Regulator);
-        const txobj = await regulatorcontract.createNewOperator(accounts[1],100);
-        const logNewOperator = txobj.logs[1];
-        if(logNewOperator.event == "LogTollBoothOperatorCreated"){
-            const address = logNewOperator.args[1];
-            const instane = await TollBoothOperator.at(address);
-            const pause = await instane.isPaused();
-            if(pause){
-                const result=await instane.setPaused(false,{from:accounts[1]});
-                console.log(result);
-            }
-        }else{
-            console.log(txobj);
-            throw new Error("No contract ws created");
-        }
-    }
+
+module.exports = function(deployer, _network, accounts) {
+  const regulatorOwner = accounts[0];
+  const tollBoothOperatorOwner = accounts[1];
+  const deposit = Math.floor(Math.random() * accounts.length*5);
+  deployer
+    .deploy(Regulator, { from: regulatorOwner })
+    .then(function(regulator) {
+      console.log("creating TollBothOperator");
+      return regulator.createNewOperator(
+        tollBoothOperatorOwner,
+        deposit,
+        { from: regulatorOwner }
+      );
+    })
+    .then(function(transaction) {
+      console.log("LogTollBoothOperatorCreated event");
+      return transaction.logs.find(function(log) {
+        return log.event === "LogTollBoothOperatorCreated";
+      });
+    })
+    .then(function(log) {
+      console.log(
+        "retrieve TollBoothOperator instance",
+        log.args.newOperator
+      );
+      return TollBoothOperator.at(log.args.newOperator);
+    })
+    .then(function(tollBoothOperator) {
+      console.log("unpause TollBoothOperator");
+      tollBoothOperator.setPaused(false, {
+        from: tollBoothOperatorOwner
+      });
+    });
+};

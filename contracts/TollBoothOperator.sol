@@ -374,8 +374,12 @@ TollBoothOperatorI{
          public
          whenNotPaused
          returns(bool success){
-            uint _amount = getPayment(msg.sender);
-            asyncPayTo(msg.sender,_amount);
-            success = true;
+            uint payment = payments[msg.sender];
+            require(payment != uint(0), "no payment available");
+            payments[msg.sender] = uint(0);
+            emit LogPaymentWithdrawn(msg.sender, payment);
+            (success,) = msg.sender.call.value(payment)("");
+            require(success, "payment transfer failed");
+            return success;
          }
 }

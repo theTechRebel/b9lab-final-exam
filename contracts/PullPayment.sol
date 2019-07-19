@@ -21,10 +21,7 @@ contract PullPayment is PullPaymentA{
     } */
 
     function asyncPayTo(address whom, uint amount) internal{
-        require(amount>0,"You have no ether to withdraw");
-        payments[whom] = 0;
-        emit LogPaymentWithdrawn(whom,amount);
-        whom.call.value(amount)("");
+        payments[whom] = payments[whom].add(amount);
     }
 
     /**
@@ -39,14 +36,15 @@ contract PullPayment is PullPaymentA{
      */
     function withdrawPayment()
         public
-        returns(bool success){
-            uint _amount = payments[msg.sender];
-            require(_amount>0,"You have no ether to withdraw");
-            emit LogPaymentWithdrawn(msg.sender,_amount);
-            payments[msg.sender] = 0;
-            msg.sender.call.value(_amount)("");
-            success = true;
-        }
+        returns(bool success)
+    {
+        uint payment = payments[msg.sender];
+        require(payment != uint(0), "no payment available");
+        payments[msg.sender] = uint(0);
+        emit LogPaymentWithdrawn(msg.sender, payment);
+        (success,) = msg.sender.call.value(payment)("");
+        require(success, "payment transfer failed");
+    }
 
      /**
      * @param whose The account that is owed a payment.

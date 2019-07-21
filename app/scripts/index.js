@@ -134,6 +134,30 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
         }
       );
       }
+
+      if(logs.length < 1){
+        $("#tb_operator2").html("There are no TollBoothOperators Deployed");
+        $("#tb_select2").hide();
+      }else{
+      $("#tb_operator2").html("Select a TollBoothOperator contract to use from below:");
+      $("#tb_select2").show();
+      let dropdown2;
+      
+      logs.forEach(
+        async function(log){
+          let isOperator = await App.contracts.regulator.isOperator.call(log.args.newOperator);
+          if(isOperator){
+            let contract = await TollBoothOperator.at(log.args.newOperator);
+            let isTollBooth = await contract.isTollBooth.call(App.account);
+            if(isTollBooth){
+              dropdown2 +='<option value="'+log.args.newOperator+'">'+log.args.newOperator+'</option>';
+              $("#tb_select2").html(dropdown2);
+            }
+          }
+        }
+      );
+      }
+
   }catch(e){
     console.log(e);
   }
@@ -194,26 +218,25 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
         console.log(gas);
         web3.eth.getBlock("latest", async function(error, block){
           if(!error){
-          await App.contracts.regulator.createNewOperator(owner, deposit,{from:App.account,gas:block.gasLimit})
+          App.contracts.regulator.createNewOperator(owner, deposit,{from:App.account,gas:block.gasLimit})
           .on("transactionHash",async (hash)=>{
-            App.setStatus("Your transaction with Hash"+hash+" is on its way!");
+            App.setStatus("Your transaction with Hash "+hash+" is on its way!");
           })
-          .on("confirmation",async(confirmationNumber, receipt)=>{
-            App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-              console.log(receipt);
-          })
+          
           .on("receipt",async(receipt)=>{
             let logs=[];let i=0;
             receipt.logs.forEach(
               function(item){
                 logs[i] = item.event;
                 i++;
+                logs[i] = item.args;
+                i++;
               }
             )
             if(receipt.status == 1){
-              App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+              App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
               }else{
-                App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+                App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
               }
                 console.log(receipt);
         })
@@ -240,28 +263,29 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
       const test = await App.contracts.regulator.setVehicleType.call(add,typ,{from:App.account});
       if(test){
         const gas = await App.contracts.regulator.setVehicleType.estimateGas(add,typ,{from:App.account});
-        await App.contracts.regulator.setVehicleType(add, typ, {from: App.account,gas:gas})
+        App.contracts.regulator.setVehicleType(add, typ, {from: App.account,gas:gas})
         .on("transactionHash",async (hash)=>{
           App.setStatus("Your transaction with Hash"+hash+" is on its way!");
         })
-        .on("confirmation",async(confirmationNumber, receipt)=>{
-          App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-            console.log(receipt);
-        })
+        
         .on("receipt",async(receipt)=>{
+          console.log("on reciept...");
           let logs=[];let i=0;
           receipt.logs.forEach(
             function(item){
               logs[i] = item.event;
               i++;
+              logs[i] = item.args;
+              i++;
             }
           )
           if(receipt.status == 1){
-            App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+            App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }else{
-              App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+              App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }
               console.log(receipt);
+              receipt = null;
       })
         .on("error",async(error)=>{
           App.setStatus("Transaction failed due to: "+error);
@@ -299,22 +323,20 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
       .on("transactionHash",async (hash)=>{
         App.setStatus("Your transaction with Hash"+hash+" is on its way!");
       })
-      .on("confirmation",async(confirmationNumber, receipt)=>{
-        App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-          console.log(receipt);
-      })
       .on("receipt",async(receipt)=>{
         let logs=[];let i=0;
         receipt.logs.forEach(
           function(item){
             logs[i] = item.event;
             i++;
+            logs[i] = item.args;
+            i++;
           }
         )
         if(receipt.status == 1){
-          App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+          App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
           }else{
-            App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+            App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
           }
             console.log(receipt);
     })
@@ -345,22 +367,20 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
         .on("transactionHash",async (hash)=>{
           App.setStatus("Your transaction with Hash"+hash+" is on its way!");
         })
-        .on("confirmation",async(confirmationNumber, receipt)=>{
-          App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-            console.log(receipt);
-        })
         .on("receipt",async(receipt)=>{
           let logs=[];let i=0;
           receipt.logs.forEach(
             function(item){
               logs[i] = item.event;
               i++;
+              logs[i] = item.args;
+              i++;
             }
           )
           if(receipt.status == 1){
-            App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+            App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }else{
-              App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+              App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }
               console.log(receipt);
       })
@@ -398,22 +418,20 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
         .on("transactionHash",async (hash)=>{
           App.setStatus("Your transaction with Hash"+hash+" is on its way!");
         })
-        .on("confirmation",async(confirmationNumber, receipt)=>{
-          App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-            console.log(receipt);
-        })
         .on("receipt",async(receipt)=>{
           let logs=[];let i=0;
           receipt.logs.forEach(
             function(item){
               logs[i] = item.event;
               i++;
+              logs[i] = item.args;
+              i++;
             }
           )
           if(receipt.status == 1){
-            App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+            App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }else{
-              App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+              App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }
               console.log(receipt);
       })
@@ -464,22 +482,20 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
         .on("transactionHash",async (hash)=>{
           App.setStatus("Your transaction with Hash"+hash+" is on its way!");
         })
-        .on("confirmation",async(confirmationNumber, receipt)=>{
-          App.setStatus("Your transaction has been confirmed with: "+confirmationNumber);
-            console.log(receipt);
-        })
         .on("receipt",async(receipt)=>{
           let logs=[];let i=0;
           receipt.logs.forEach(
             function(item){
               logs[i] = item.event;
               i++;
+              logs[i] = item.args;
+              i++;
             }
           )
           if(receipt.status == 1){
-            App.setStatus("Transaction was succesful: "+"<small>"+JSON.stringify(logs)+"<small>");
+            App.setStatus("Transaction was succesful: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }else{
-              App.setStatus("Transaction has failed: "+"<small>"+JSON.stringify(logs)+"<small>");
+              App.setStatus("Transaction has failed: "+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
             }
               console.log(receipt);
       })
@@ -543,19 +559,54 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
           document.getElementById("exithistory").innerHTML = "<small><samp><pre>"+JSON.stringify(logs, undefined, 2)+"</pre></samp></small>";
       }
     },
-    handleReportExit: function(){
+    handleReportExit: async function(){
       var secret = document.getElementById("exitsecret").value;
-      App.setStatus("Generating crazy your unique hash... (please wait)");
-      var reg;
-      TollBoothOperator.deployed().then(function(instance) {
-        reg = instance;
-        return reg.reportExitRoad(secret, {from: account});
-      }).then(function() {
-        App.setStatus("Transaction complete!");
-      }).catch(function(e) {
-        console.log(e);
-        App.setStatus("Failed to report exit see log.");
-      });
+      secret = App.clean(secret);
+      secret = await window.web3.utils.fromAscii(secret);
+      let e = document.getElementById("tb_select2");
+      var tollBoothOpAddress = e.options[e.selectedIndex].value;
+
+      try{
+        const operator = await TollBoothOperator.at(tollBoothOpAddress);
+        let result = await operator.reportExitRoad.call(secret,{from:App.account});
+        console.log(result);
+        if(result){
+          let gas =  await operator.reportExitRoad.estimateGas(secret,{from:App.account});
+          console.log(gas);
+          console.log(result);
+          await operator.reportExitRoad(secret,{from:App.account})
+          .on("transactionHash",async (hash)=>{
+            App.setStatus("Your transaction with Hash"+hash+" is on its way!");
+          })
+          .on("receipt",async(receipt)=>{
+            let logs=[];let i=0;
+            receipt.logs.forEach(
+              function(item){
+                logs[i] = item.event;
+                i++;
+                logs[i] = item.args;
+                i++;
+              }
+            )
+            if(receipt.status == 1){
+              App.setStatus("Transaction succesful:"+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
+              document.getElementById("report_here").innerHTML = "<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>";
+              }else{
+                App.setStatus("Transaction failed:"+"<small><samp><pre>"+JSON.stringify(logs, undefined, 1)+"</pre></samp></small>");
+              }
+        })
+          .on("error",async(error)=>{
+            App.setStatus("Transaction failed due to: "+error);
+          })
+          .on("Error",async(error)=>{
+            App.setStatus("Transaction failed due to: "+error);
+          })
+          App.getVehicleBalance();
+      }
+    }catch(e){
+      console.log(e);
+      App.setStatus(e.message);
+    }
     }
 }
   

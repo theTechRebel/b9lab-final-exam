@@ -52,7 +52,7 @@
     <div class="tab-pane fade" id="tollboothoperator" role="tabpanel" aria-labelledby="tollboothoperator-tab">
         <div class="row">
           <div class="col-md-12"><br/>
-            <span id="tb_operator"></span>
+            <span id="tb_operator"></span><br/><br/>
           <select id="tb_select">
             </select>
           </input>
@@ -91,7 +91,6 @@
             <span id="tb_operator1"></span><br/><br/>
           <select id="tb_select1">
             </select>
-          </input>
           <br/><br/><br/>
           </div>
           <div class="col-md-3">
@@ -121,10 +120,12 @@
             </div>
             <div class="col-md-6">
                 <b><u>Display entry & exit history from selected operator:</u></b><br/>
-                <button type="button" class="btn btn-primary" id="extHashbtn" >Get Entry</button><br/>
+                <button type="button" class="btn btn-primary" id="extHashbtn" >Get History</button><br/>
                 <div class="container"> 
                     <div class="row"> 
+                        <b>ENTRY HISTORY</b>
                        <div class="col"><span id="entryhistory">Entry history will display here...</span><br/></div>
+                       <b>EXIT HISTORY</b>
                        <div class="col"><span id="exithistory">Exit history will display here...</span></div> 
                     </div> 
                  </div>
@@ -133,14 +134,21 @@
     </div>
     <div class="tab-pane fade" id="tollbooths" role="tabpanel" aria-labelledby="tollbooths-tab">
         <div class="row">
-            <div class="col-md-6">
-                <p>Report a vehicle exit</p>
-                <input type="text" name="exitsecret" id="exitsecret"><br/>
-                <button type="button" class="btn btn-primary" id="exitsecretbtn" >Enter Exit Secret</button>
+            <div class="col-md-12">
+              <span id="tb_operator2">You do not belong to any TollBoothOperators, you are not a TollBooth</span><br/><br/>
+            <select id="tb_select2">
+              </select><br/><br/><br/>
+            </div>
+            <div class="col-md-4">
+                <b><u>Report a vehicle exit</u></b><br/>
+                Enter Exit Secret:<br/>
+                <input type="text" name="exitsecret" id="exitsecret"><br/><br/>
+                <button type="button" class="btn btn-primary" id="exitsecretbtn" >Exit Booth</button>
                 
             </div>
-            <div class="col-md-6">
-                <p>Report of vehicle exit</p>
+            <div class="col-md-4">
+                <b><u>Report of vehicle exit</u></b><br/>
+                <span id="report_here"></span>
                 <br/>
               </div>
             </div>

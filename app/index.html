@@ -11,6 +11,9 @@
   <div class="alert alert-primary" role="alert">
   <span id="status"></span>
   </div>
+  <div id="accounts_drop_down_msg"></div>
+  <select id="accounts_drop_down">
+  </select>
   <ul class="nav nav-tabs" id="examTab" role="tablist">
     <li class="nav-item">
       <a class="nav-link active" id="regulator-tab" data-toggle="tab" href="#regulator" role="tab" aria-controls="regulator" aria-selected="true">Regulator</a>
@@ -71,7 +74,7 @@
                   Booth 2:<br/>
                   <input type="text" name="toladd2" id="toladd2"><br/>
                   Route Price:<br/>
-                  <input type="text" name="tolPrice" id="tolPrice"><br/><br/>
+                  <input type="number" name="tolPrice" id="tolPrice"><br/><br/>
                   <button type="button" class="btn btn-primary" id="tolroute" >Set Route Price</button>
               </div>
               <div class="col-md-4">

@@ -16,6 +16,7 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
     accounts: null,
     account: null,
     web3Provider: null,
+    source:null,
     contracts: {},
     init: async function() {
       return await App.initWeb3();
@@ -35,10 +36,12 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
       // Legacy dapp browsers...
       if (window.web3) {
         App.web3Provider = window.web3.currentProvider;
+        App.source = "MetaMask";
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
         App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+        App.source = "JSONRPC";
       }
       
       window.web3 = new Web3(App.web3Provider);
@@ -59,6 +62,20 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
           return;
         }else{
           App.account = App.accounts[0];
+          if(App.source == "JSONRPC"){
+            $("#accounts_drop_down_msg").html("Select an address to use from below:");
+            $("#accounts_drop_down").show();
+            let dropdown;
+            App.accounts.forEach(
+              async function(accounts){
+                    dropdown+='<option value="'+accounts+'">'+accounts+'</option>';
+                    $("#accounts_drop_down").html(dropdown);
+              }
+            );
+          }else{
+            $("#accounts_drop_down_msg").html("Using Meta Mask, change addresses via Meta Mask");
+            $("#accounts_drop_down").hide();
+          }
           App.bindEvents();
           App.refreshBalance();
           App.getVehicleBalance();
@@ -198,6 +215,15 @@ const TollBoothOperator = truffle(TollBoothOperatorJson);
      $(document).on('click','#extHashbtn', App.handleGetExitHistory);
      $(document).on('click','#exitsecretbtn', App.handleReportExit);
      $(document).on('click','#setmultiplier', App.handleSetMultiplier);
+     $(document).on('change','#accounts_drop_down', App.changeAccounts);
+  },
+  changeAccounts: function(){
+    let e = document.getElementById("accounts_drop_down");
+    var address = e.options[e.selectedIndex].value;
+    App.account = address;
+    console.log(address);
+    App.refreshBalance();
+          App.getVehicleBalance();
   },
   clean: function(value){
     return value.replace(/\s/g,'');
